@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<title>上海市闸北区大宁国际学校</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+		<link rel="stylesheet" href="/css/amazeui.css">
+		<link rel="stylesheet" href="/css/ionic.min.css">
+		<link rel="stylesheet" href="/css/app.css">
+	</head>
+
+	<body ng-app="App" ng-controller="NoticeIndexController">
+
+		<div id="loading" ng-hide="loading">
+	    	<div class="sk-wandering-cubes">
+				<div class="sk-cube sk-cube1"></div>
+				<div class="sk-cube sk-cube2"></div>
+			</div>
+		</div>
+
+		<ion-header-bar class="background-color-1" style="background-image: none;">
+			<div class="am-center" style="width: 250px;">
+				<div class="button-bar">
+					<button class="button tab-button" ng-class="{true: 'active', false: ''}[isActive]" ng-click="clickNo();">未审核</button>
+					<button class="button" ng-class="{true: '', false: 'active'}[isActive]" ng-click="clickYes();">已审核</button>
+				</div>
+			</div>
+		</ion-header-bar>
+
+		<ion-content>
+
+			<ion-list ng-show="isActive">
+				<ion-item ng-repeat="task in taskList" ng-click="clickTask(task);">
+					<div class="am-text-truncate">流程: {{task.ApplyType}}</div>
+					<div class="am-text-truncate">申请人: {{task.ApplyUserName}}</div>
+					<div class="am-text-truncate">申请时间: {{task.ApplyCreateTime}}</div>
+				</ion-item>
+			</ion-list>
+
+			<ion-infinite-scroll on-infinite="load()" ng-if="isMore" ng-show="isActive">
+			</ion-infinite-scroll>
+
+		</ion-content>
+	</body>
+
+</html>
+
+<script src="/js/lazyload.js"></script>
+<script>
+	LazyLoad.js(["/js/ionic.bundle.min.js", "/js/angular-cookies.js", "/js/app.js"], function () {
+		var app = angular.module("App", ["ionic", "ngCookies"])
+			.controller("NoticeIndexController", function($scope, $http, $timeout, $ionicLoading, $cookieStore) {
+				var userId = $cookieStore.get(CookieUserId);
+				var page = 1;
+				var limit = 999;
+				$scope.isActive = true;
+				$scope.isLoad = false;
+				$scope.isMore = true;
+				$scope.taskList = [];
+
+				if(isApp) {
+					window.location.href = "webviewplus://" + encodeURIComponent("{\"action\":\"" + ActionSetTitle + "\",\"data\":{\"text\":\"我的待办\"}}");
+				}
+
+				setBackAndRefresh = function(payload) {
+					page = 1;
+					$scope.isLoad = false;
+					$scope.isMore = false;
+					$scope.isEmpty = false;
+					$scope.taskList = [];
+
+					$scope.load();
+				}
+
+				formatApplyType = function(val) {
+				    if (val == "LEAVE") {
+				        return "请假";
+				    } else if (val == "PURCHASE") {
+				        return "请购";
+				    } else if (val == "MAINTENANCE") {
+				        return "维修";
+				    }
+				}
+
+				$scope.clickYes = function() {
+					$scope.isActive = false;
+				}
+
+				$scope.clickNo = function() {
+					$scope.isActive = true;
+				}
+
+				$scope.clickTask = function(task) {
+					var url = "";
+
+					if(task.type == "LEAVE") {
+						url = "leave";
+					}
+
+					if(url == "") {
+						return;
+					}
+
+					window.location.href = "/" + url + "/view.html?id=" + task.ApplyId + "&taskId=" + task.id;
+				}
+
+				$scope.load = function() {
+					if ($scope.isLoad) {
+						return;
+					}
+
+					$scope.isLoad = true;
+
+					$http({
+						method: "POST",
+						url: "/api/task/list",
+						headers: {
+							"Content-Type": "application/json;charset=utf-8"
+						},
+						data: {
+							userId: userId,
+							page: page,
+							limit: limit
+						}
+					}).success(function(response) {
+						if (response.result) {
+							var list = response.data;
+							for (var i = 0; i < list.length; i++) {
+								list[i].type = list[i].ApplyType;
+
+								list[i].ApplyType = formatApplyType(list[i].ApplyType);
+
+								$scope.taskList.push(list[i]);
+							}
+
+							if (list.length == limit) {
+								$scope.isLoad = false;
+								page++;
+							}
+
+							if(list.length < limit) {
+								$scope.isMore = false;
+							}
+						}
+
+						$scope.loading = true;
+
+	     				$scope.$broadcast("scroll.infiniteScrollComplete");
+					});
+				}
+
+				getSetting = function(payload) {
+					userId = payload.appUserId;
+
+					$cookieStore.put(CookieUserId, payload.appUserId);
+
+					$scope.load();
+				}
+
+				if(isNullOrEmpty(userId)) {
+					$timeout(function(){
+						window.location.href = "webviewplus://" + encodeURIComponent("{\"action\":\"" + ActionGetSetting + "\",\"data\":{}}");
+				    }, 1);
+				} else {
+					$scope.load();
+				}
+			});
+	});
+</script>

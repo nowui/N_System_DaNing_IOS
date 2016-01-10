@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<title>上海市闸北区大宁国际学校</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<meta http-equiv="Content-Security-Policy" content="default-src *; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'unsafe-eval'">
+
+		<link rel="stylesheet" href="/css/amazeui.css">
+		<link rel="stylesheet" href="/css/ionic.min.css">
+		<link rel="stylesheet" href="/css/app.css">
+
+		<script src="/js/lazyload.js"></script>
+
+	</head>
+
+	<body ng-app="App" ng-controller="LoginController" class="background-color-2">
+		<div id="loading" ng-hide="loading">
+			<div class="sk-wandering-cubes">
+				<div class="sk-cube sk-cube1"></div>
+				<div class="sk-cube sk-cube2"></div>
+			</div>
+		</div>
+
+		<ion-content>
+			<div class="am-g am-margin-top">
+				<div class="am-u-sm-4">
+					<hr data-am-widget="divider" style="" class="am-divider am-divider-default" />
+				</div>
+				<div class="am-u-sm-4 am-text-center">
+					<h4>学校账号</h4></div>
+				<div class="am-u-sm-4">
+					<hr data-am-widget="divider" style="" class="am-divider am-divider-default" />
+				</div>
+			</div>
+
+			<div class="list list-inset">
+				<div class="item item-icon-left">
+					<i class="icon material-icons">&#xe7fd;</i>
+	    			<input type="text" placeholder="输入帐号" ng-model="user.account" value="" style="width: 100%;">
+				</div>
+				<div class="item item-icon-left">
+					<i class="icon material-icons">&#xe897;</i>
+					<input type="password" placeholder="输入密码" ng-model="user.password" value="" style="width: 100%;">
+				</div>
+			</div>
+
+			<div style="padding-left: 8px; padding-right: 8px;">
+				<button type="button" class="am-btn am-btn-xs am-btn-primary am-btn-block" ng-click="submitForm();">确定</button>
+			</div>
+		</ion-content>
+
+	</body>
+
+</html>
+
+<script>
+	LazyLoad.js(["/js/ionic.bundle.min.js", "/js/angular-cookies.js", "/js/app.js"], function () {
+		var app = angular.module("App", ["ionic", "ngCookies"])
+			.controller('LoginController', function($scope, $http, $timeout, $ionicLoading, $cookieStore) {
+				var jpushRegistrationId = "";
+				$scope.user = {};
+				$scope.user.account = $cookieStore.get(CookieAccount);
+				$scope.user.password = "";
+
+				getSetting = function(payload) {
+					jpushRegistrationId = payload.jpushRegistrationId;
+
+					$scope.check();
+				}
+
+				if(isApp) {
+					window.location.href = "webviewplus://" + encodeURIComponent("{\"action\":\"" + ActionSetTitle + "\",\"data\":{\"text\":\"登录\"}}");
+				}
+
+				$scope.submitForm = function() {
+					if($scope.user.account == "" || $scope.user.password == "") {
+						$ionicLoading.show({
+							template: "	请填写完整!",
+					      	duration: WaitDelay
+					    });
+
+						return;
+					}
+
+					if(isApp) {
+						window.location.href = "webviewplus://" + encodeURIComponent("{\"action\":\"" + ActionGetSetting + "\",\"data\":{}}");
+					} else {
+						$scope.check();
+					}
+				}
+
+				$scope.check = function() {
+
+					$cookieStore.put(CookieAccount, $scope.user.account);
+
+					$ionicLoading.show({
+						template: "<ion-spinner icon=\"android\" class=\"spinner-light\"></ion-spinner>"
+				    });
+
+					$http({
+						method: "POST",
+						url: "/api/user/check",
+						headers: {"Content-Type": "application/json;charset=utf-8"},
+						data: {
+							account: $scope.user.account,
+							password: $scope.user.password,
+							jpushRegistrationId: jpushRegistrationId
+						}
+					}).success(function(response) {
+						if(response.result) {
+							var expireDate = new Date();
+  							expireDate.setDate(expireDate.getDate() + 999);
+
+							$cookieStore.put(CookieUserId, response.data.id, {"expires": expireDate});
+							$cookieStore.put(CookieUserName, response.data.name, {"expires": expireDate});
+
+							$ionicLoading.hide();
+
+							if(isApp) {
+								window.location.href = "webviewplus://" + encodeURIComponent("{\"action\":\"" + ActionSetSetting + "\",\"data\":{\"appUserId\":\"" + response.data.id + "\",\"appUserName\":\"" + response.data.name + "\"}}");
+
+								var data = {
+									isRoot: true,
+									isSplash: true,
+									isDoubleClickBack: true,
+									isFinish: true,
+									data: "{\"type\": \"MultiFooter\", \"data\": {\"footer\": [{\"header\": {\"center\": {\"data\": \"上海市闸北区大宁国际学校\"} }, \"text\": \"首页\", \"icon\": \"\\ue88a\", \"url\": \"/index.html\"}, {\"header\": {\"center\": {\"data\": \"应用中心\"} }, \"text\": \"应用\", \"icon\": \"\\ue896\", \"url\": \"/application.html\"}, {\"header\": {\"center\": {\"data\": \"通讯录\"} }, \"text\": \"通讯录\", \"icon\": \"\\ue551\", \"url\": \"/contact.html\"}, {\"header\": {\"center\": {\"data\": \"我\"} }, \"text\": \"我\", \"icon\": \"\\ue7fd\", \"url\": \"/mine.html\"}] } }"
+								};
+
+								$timeout(function() {
+									window.location.href = "webviewplus://" + encodeURIComponent("{\"action\":\"" + ActionSetGo + "\",\"data\":" + JSON.stringify(data) + "}");
+							    }, 1);
+							} else {
+								window.location.href = "/index.html";
+							}
+						} else {
+							//$scope.loading = true;
+
+							$ionicLoading.show({
+								template: response.message,
+						      	duration: WaitDelay
+						    });
+						}
+
+					});
+				}
+
+				$scope.loading = true;
+			});
+	});
+</script>

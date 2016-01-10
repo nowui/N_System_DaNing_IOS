@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<title>上海市闸北区大宁国际学校</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+		<link rel="stylesheet" href="/css/amazeui.css">
+		<link rel="stylesheet" href="/css/ionic.min.css">
+		<link rel="stylesheet" href="/css/app.css">
+
+		<script src="/js/lazyload.js"></script>
+
+	</head>
+
+	<body ng-app="App" ng-controller="EnrollIndexController" class="background-color-2">
+
+		<div id="empty" ng-show="isEmpty">
+	    	<div class="empty-container">
+	    		<i class="icon material-icons empty-icon">&#xe14d;</i>
+				<p class="empty-text">没有数据</p>
+			</div>
+		</div>
+
+		<div id="loading" ng-hide="loading">
+	    	<div class="sk-wandering-cubes">
+				<div class="sk-cube sk-cube1"></div>
+				<div class="sk-cube sk-cube2"></div>
+			</div>
+		</div>
+
+		<ion-content>
+
+			<ion-list>
+				<div class="am-margin-top-sm">
+					<ion-item class="item-icon-right" href="#">
+						学校召开宣传报道小组工作会议
+						<p></p>
+						2015-10-22 10:53:10
+		    			<i class="icon material-icons item-note">&#xe5cc;</i>
+					</ion-item>
+					<ion-item class="item-icon-right" href="#">
+						学校卫生和安全工作会议
+						<p></p>
+						2015-10-22 10:53:10
+		    			<i class="icon material-icons item-note">&#xe5cc;</i>
+					</ion-item>
+					<ion-item class="item-icon-right" href="#">
+						科研工作会议
+						<p></p>
+						2015-10-22 10:53:10
+		    			<i class="icon material-icons item-note">&#xe5cc;</i>
+					</ion-item>
+				</div>
+			</ion-list>
+
+		</ion-content>
+	</body>
+
+</html>
+
+<script>
+	LazyLoad.js(["/js/ionic.bundle.min.js", "/js/angular-cookies.js", "/js/app.js"], function () {
+		var app = angular.module("App", ["ionic", "ngCookies"])
+			.controller("EnrollIndexController", function($scope, $http, $timeout, $ionicLoading, $cookieStore) {
+				$scope.isActive = true;
+				$scope.isEmpty = false;
+
+				if(isApp) {
+					window.location.href = "webviewplus://" + encodeURIComponent("{\"action\":\"" + ActionSetTitle + "\",\"data\":{\"text\":\"我的报名\"}}");
+				}
+
+				$scope.clickPurchase = function() {
+					$scope.isActive = true;
+				}
+
+				$scope.clickMaintenance = function() {
+					$scope.isActive = false;
+				}
+
+				$scope.loading = true;
+			});
+	});
+</script>

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<title>上海市闸北区大宁国际学校</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+		<link rel="stylesheet" href="/css/amazeui.css">
+		<link rel="stylesheet" href="/css/ionic.min.css">
+		<link rel="stylesheet" href="/css/app.css">
+
+		<script src="/js/lazyload.js"></script>
+
+	</head>
+
+	<body ng-app="App" ng-controller="PortalViewController">
+		<div id="loading" ng-hide="loading">
+	    	<div class="sk-wandering-cubes">
+				<div class="sk-cube sk-cube1"></div>
+				<div class="sk-cube sk-cube2"></div>
+			</div>
+		</div>
+
+		<ion-content class="am-padding">
+			<div class="am-margin-top" ng-bind-html="page.content | trustHtml"></div>
+		</ion-content>
+	</body>
+
+</html>
+
+<script>
+	LazyLoad.js(["/js/ionic.bundle.min.js", "/js/angular-cookies.js", "/js/app.js"], function () {
+		var app = angular.module("App", ["ionic", "ngCookies"])
+			.controller('PortalViewController', function($scope, $http, $timeout, $ionicLoading, $cookieStore) {
+				if(isApp) {
+					window.location.href = "webviewplus://" + encodeURIComponent("{\"action\":\"" + ActionSetTitle + "\",\"data\":{\"text\":\"校园风光\"}}");
+				}
+
+				$http({
+					method: "POST",
+					url: "/api/page/find",
+					headers: {
+						"Content-Type": "application/json;charset=utf-8"
+					},
+					data: {
+						value: "category_page_view"
+					}
+				}).success(function(response) {
+					if (response.result) {
+						$scope.page = response.data;
+
+						$scope.page.content = $scope.page.content.replaceAll("<img alt=\"\" src=\"/upload/images/", "<img alt=\"\" src=\"" +imageUrl + "/upload/images/");
+					}
+
+					$scope.loading = true;
+				});
+			})
+			.filter('trustHtml', function ($sce) {
+		        return function (input) {
+		            return $sce.trustAsHtml(input);
+		        }
+		    });
+	});
+</script>

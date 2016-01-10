@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<title>上海市闸北区大宁国际学校</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+		<link rel="stylesheet" href="/css/amazeui.css">
+		<link rel="stylesheet" href="/css/ionic.min.css">
+		<link rel="stylesheet" href="/css/app.css">
+
+		<script src="/js/lazyload.js"></script>
+
+	</head>
+
+	<body ng-app="App" ng-controller="ArticleIndexController">
+		<div id="empty" ng-show="isEmpty">
+	    	<div class="empty-container">
+	    		<i class="icon material-icons empty-icon">&#xe14d;</i>
+				<p class="empty-text">没有数据</p>
+			</div>
+		</div>
+
+		<div id="loading" ng-hide="loading">
+	    	<div class="sk-wandering-cubes">
+				<div class="sk-cube sk-cube1"></div>
+				<div class="sk-cube sk-cube2"></div>
+			</div>
+		</div>
+
+		<ion-content>
+
+			<ion-list>
+				<ion-item ng-repeat="article in articleList" href="/article/detail.html?id={{article.id}}">
+					<img src="{{article.picture}}" style="float: left; margin-right: 5px; height: 47px;">
+					<div class="am-text-truncate">{{article.title}}</div>
+					<div class="am-text-truncate">{{article.summary}}</div>
+				</ion-item>
+			</ion-list>
+
+			<ion-infinite-scroll on-infinite="load()" ng-if="isMore">
+			</ion-infinite-scroll>
+
+		</ion-content>
+	</body>
+
+</html>
+
+<script>
+	LazyLoad.js(["/js/ionic.bundle.min.js", "/js/angular-cookies.js", "/js/app.js"], function () {
+		var app = angular.module("App", ["ionic", "ngCookies"])
+			.controller("ArticleIndexController", function($scope, $http, $timeout, $ionicLoading, $ionicSlideBoxDelegate, $cookieStore) {
+				var page = 1;
+				var limit = 10;
+				$scope.isLoad = false;
+				$scope.isMore = true;
+				$scope.isEmpty = false;
+				$scope.articleList = [];
+
+				if(isApp) {
+					window.location.href = "webviewplus://" + encodeURIComponent("{\"action\":\"" + ActionSetTitle + "\",\"data\":{\"text\":\"校园资讯\"}}");
+				}
+
+				$scope.load = function() {
+					if ($scope.isLoad) {
+						return;
+					}
+
+					$scope.isLoad = true;
+
+					$http({
+						method: "POST",
+						url: "/api/article/list",
+						headers: {
+							"Content-Type": "application/json;charset=utf-8"
+						},
+						data: {
+							page: page,
+							limit: limit
+						}
+					}).success(function(response) {
+						if (response.result) {
+							var list = response.data;
+							for (var i = 0; i < list.length; i++) {
+								var article = list[i];
+								article.picture = imageUrl + article.picture.replace("/upload/images/", "/upload/_thumbs/Images/");
+								$scope.articleList.push(article);
+							}
+
+							if (list.length == limit) {
+								$scope.isLoad = false;
+								page++;
+							}
+
+							if(list.length < limit) {
+								$scope.isMore = false;
+							}
+
+							if(page == 1 && list.length == 0) {
+								$scope.isEmpty = true;
+							}
+						}
+
+						$scope.loading = true;
+
+	     				$scope.$broadcast("scroll.infiniteScrollComplete");
+					});
+				}
+			});
+	});
+</script>

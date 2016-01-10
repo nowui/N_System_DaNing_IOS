@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<title>上海市闸北区大宁国际学校</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+		<link rel="stylesheet" href="/css/amazeui.css">
+		<link rel="stylesheet" href="/css/ionic.min.css">
+		<link rel="stylesheet" href="/css/app.css">
+
+		<script src="/js/lazyload.js"></script>
+
+	</head>
+
+	<body ng-app="App" ng-controller="ScheduleIndexController" class="background-color-2">
+
+		<div id="empty" ng-show="isEmpty">
+	    	<div class="empty-container">
+	    		<i class="icon material-icons empty-icon">&#xe14d;</i>
+				<p class="empty-text">没有数据</p>
+			</div>
+		</div>
+
+		<div id="loading" ng-hide="loading">
+			<div class="sk-wandering-cubes">
+				<div class="sk-cube sk-cube1"></div>
+				<div class="sk-cube sk-cube2"></div>
+			</div>
+		</div>
+
+		<ion-header-bar class="background-color-1" style="background-image: none;">
+			<div class="am-center" style="width: 250px;">
+				<div class="button-bar">
+					<button class="button tab-button" ng-class="{true: 'active', false: ''}[isActive]" ng-click="clickTeacher();">个人日程</button>
+					<button class="button" ng-class="{true: '', false: 'active'}[isActive]" ng-click="clickSchool();">全校日程</button>
+				</div>
+			</div>
+		</ion-header-bar>
+
+		<div class="tabs-striped tabs-top background-color-3 ">
+			<div class="tabs" ng-show="isActive">
+				<a class="tab-item" ng-class="{true: 'active', false: ''}[teacherDay == 1]" ng-click="clickTeacherDay(1);">
+					周一
+				</a>
+				<a class="tab-item" ng-class="{true: 'active', false: ''}[teacherDay == 2]" ng-click="clickTeacherDay(2);">
+					周二
+				</a>
+				<a class="tab-item" ng-class="{true: 'active', false: ''}[teacherDay == 3]" ng-click="clickTeacherDay(3);">
+					周三
+				</a>
+				<a class="tab-item" ng-class="{true: 'active', false: ''}[teacherDay == 4]" ng-click="clickTeacherDay(4);">
+					周四
+				</a>
+				<a class="tab-item" ng-class="{true: 'active', false: ''}[teacherDay == 5]" ng-click="clickTeacherDay(5);">
+					周五
+				</a>
+				<a class="tab-item" ng-class="{true: 'active', false: ''}[teacherDay == 6]" ng-click="clickTeacherDay(6);">
+					周六
+				</a>
+				<a class="tab-item" ng-class="{true: 'active', false: ''}[teacherDay == 7]" ng-click="clickTeacherDay(7);">
+					周日
+				</a>
+			</div>
+
+			<div class="tabs" ng-show="! isActive">
+				<a class="tab-item" ng-class="{true: 'active', false: ''}[schoolDay == 1]" ng-click="clickSchoolDay(1);">
+					周一
+				</a>
+				<a class="tab-item" ng-class="{true: 'active', false: ''}[schoolDay == 2]" ng-click="clickSchoolDay(2);">
+					周二
+				</a>
+				<a class="tab-item" ng-class="{true: 'active', false: ''}[schoolDay == 3]" ng-click="clickSchoolDay(3);">
+					周三
+				</a>
+				<a class="tab-item" ng-class="{true: 'active', false: ''}[schoolDay == 4]" ng-click="clickSchoolDay(4);">
+					周四
+				</a>
+				<a class="tab-item" ng-class="{true: 'active', false: ''}[schoolDay == 5]" ng-click="clickSchoolDay(5);">
+					周五
+				</a>
+				<a class="tab-item" ng-class="{true: 'active', false: ''}[schoolDay == 6]" ng-click="clickSchoolDay(6);">
+					周六
+				</a>
+				<a class="tab-item" ng-class="{true: 'active', false: ''}[schoolDay == 7]" ng-click="clickSchoolDay(7);">
+					周日
+				</a>
+			</div>
+		</div>
+
+		<ion-content style="top: 93px;">
+
+			<ion-list ng-show="isActive">
+				<div class="am-margin-top-sm">
+					<!--<ion-item class="item-icon-right" href="#">
+
+					</ion-item>-->
+				</div>
+			</ion-list>
+
+			<ion-list ng-show="! isActive">
+				<div class="am-margin-top-sm">
+					<!--<ion-item class="item-icon-right" href="#">
+
+					</ion-item>-->
+				</div>
+			</ion-list>
+
+		</ion-content>
+	</body>
+
+</html>
+
+<script>
+	LazyLoad.js(["/js/ionic.bundle.min.js", "/js/angular-cookies.js", "/js/app.js"], function () {
+		var app = angular.module("App", ["ionic", "ngCookies"])
+			.controller("ScheduleIndexController", function($scope, $http, $timeout, $ionicLoading, $cookieStore) {
+				$scope.isActive = true;
+				$scope.isEmpty = false;
+				$scope.teacherDay = 1;
+				$scope.schoolDay = 1;
+
+				if(isApp) {
+					window.location.href = "webviewplus://" + encodeURIComponent("{\"action\":\"" + ActionSetTitle + "\",\"data\":{\"text\":\"日程\"}}");
+				}
+
+				$scope.clickTeacher = function() {
+					$scope.isActive = true;
+				}
+
+				$scope.clickSchool = function() {
+					$scope.isActive = false;
+				}
+
+				$scope.clickTeacherDay = function(day) {
+					$scope.teacherDay = day;
+				}
+
+				$scope.clickSchoolDay = function(day) {
+					$scope.schoolDay = day;
+				}
+
+				$scope.loading = true;
+			});
+	});
+</script>

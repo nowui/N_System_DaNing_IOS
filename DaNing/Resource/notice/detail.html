@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<title>上海市闸北区大宁国际学校</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+		<link rel="stylesheet" href="/css/amazeui.css">
+		<link rel="stylesheet" href="/css/ionic.min.css">
+		<link rel="stylesheet" href="/css/app.css">
+	</head>
+
+	<body ng-app="App" ng-controller="NoticeDetailController">
+		<div id="loading" ng-hide="loading">
+	    	<div class="sk-wandering-cubes">
+				<div class="sk-cube sk-cube1"></div>
+				<div class="sk-cube sk-cube2"></div>
+			</div>
+		</div>
+
+		<ion-content class="am-padding">
+			<div class="am-text-center am-margin-top"><h4>{{notice.title}}</h4></div>
+			<div class="am-text-center">{{notice.createTime}}</div>
+			<hr data-am-widget="divider" style="" class="am-divider am-divider-default" />
+			<div ng-bind-html="notice.content | trustHtml"></div>
+		</ion-content>
+	</body>
+
+</html>
+
+<script src="/js/lazyload.js"></script>
+<script>
+	LazyLoad.js(["/js/ionic.bundle.min.js", "/js/angular-cookies.js", "/js/app.js"], function () {
+		var app = angular.module("App", ["ionic", "ngCookies"])
+			.controller("NoticeDetailController", function($scope, $http, $timeout, $ionicLoading, $cookieStore) {
+				var userId = $cookieStore.get(CookieUserId);
+
+				if(isApp) {
+					window.location.href = "webviewplus://" + encodeURIComponent("{\"action\":\"" + ActionSetTitle + "\",\"data\":{\"text\":\"我的通知\"}}");
+				}
+
+				$scope.load = function() {
+					$http({
+						method: "POST",
+						url: "/api/notice/find",
+						headers: {
+							"Content-Type": "application/json;charset=utf-8"
+						},
+						data: {
+							id: getUrlParam("id"),
+							userId: userId
+						}
+					}).success(function(response) {
+						if (response.result) {
+							$scope.notice = response.data;
+
+							$scope.notice.content = $scope.notice.content.replaceAll("<img alt=\"\" src=\"/upload/images/", "<img alt=\"\" src=\"" +imageUrl + "/upload/images/");
+
+							if(isApp) {
+								//window.location.href = "webviewplus://" + encodeURIComponent("{\"action\":\"" + ActionSetTitle + "\",\"data\":{\"text\":\"" + response.data.title + "\"}}");
+							}
+						}
+
+						$scope.loading = true;
+					});
+				}
+
+				getSetting = function(payload) {
+					userId = payload.appUserId;
+
+					$cookieStore.put(CookieUserId, payload.appUserId);
+
+					$scope.load();
+				}
+
+				if(isNullOrEmpty(userId)) {
+					$timeout(function(){
+						window.location.href = "webviewplus://" + encodeURIComponent("{\"action\":\"" + ActionGetSetting + "\",\"data\":{}}");
+				    }, 1);
+				} else {
+					$scope.load();
+				}
+			})
+			.filter('trustHtml', function ($sce) {
+		        return function (input) {
+		            return $sce.trustAsHtml(input);
+		        }
+		    });
+	});
+</script>

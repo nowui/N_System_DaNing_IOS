@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<title>上海市闸北区大宁国际学校</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+		<link rel="stylesheet" href="/css/amazeui.css">
+		<link rel="stylesheet" href="/css/ionic.min.css">
+		<link rel="stylesheet" href="/css/app.css">
+	</head>
+
+	<body ng-app="App" ng-controller="VideoIndexController" class="background-color-2">
+
+		<div id="loading" ng-hide="loading">
+			<div class="sk-wandering-cubes">
+				<div class="sk-cube sk-cube1"></div>
+				<div class="sk-cube sk-cube2"></div>
+			</div>
+		</div>
+
+		<ion-header-bar class="background-color-1" style="background-image: none;">
+			<div class="am-center" style="width: 250px;">
+				<div class="button-bar">
+					<button class="button tab-button" ng-class="{true: 'active', false: ''}[isActive]" ng-click="clickPrimary();">小学</button>
+					<button class="button" ng-class="{true: '', false: 'active'}[isActive]" ng-click="clickMiddle();">中学</button>
+				</div>
+			</div>
+		</ion-header-bar>
+
+		<div class="tabs-striped tabs-top background-color-3 ">
+			<div class="tabs" ng-show="isActive">
+				<a class="tab-item" ng-class="{true: 'active', false: ''}[primaryCategory == 1]" ng-click="clickPrimaryCategory(1);">
+					语文
+				</a>
+				<a class="tab-item" ng-class="{true: 'active', false: ''}[primaryCategory == 2]" ng-click="clickPrimaryCategory(2);">
+					数学
+				</a>
+				<a class="tab-item" ng-class="{true: 'active', false: ''}[primaryCategory == 3]" ng-click="clickPrimaryCategory(3);">
+					英语
+				</a>
+				<a class="tab-item" ng-class="{true: 'active', false: ''}[primaryCategory == 4]" ng-click="clickPrimaryCategory(4);">
+					综合
+				</a>
+			</div>
+
+			<div class="tabs" ng-show="! isActive">
+				<a class="tab-item" ng-class="{true: 'active', false: ''}[middleDayCategory == 1]" ng-click="clickMiddleDayCategory(1);">
+					语文
+				</a>
+				<a class="tab-item" ng-class="{true: 'active', false: ''}[middleDayCategory == 2]" ng-click="clickMiddleDayCategory(2);">
+					数学
+				</a>
+				<a class="tab-item" ng-class="{true: 'active', false: ''}[middleDayCategory == 3]" ng-click="clickMiddleDayCategory(3);">
+					英语
+				</a>
+				<a class="tab-item" ng-class="{true: 'active', false: ''}[middleDayCategory == 4]" ng-click="clickMiddleDayCategory(4);">
+					物理
+				</a>
+				<a class="tab-item" ng-class="{true: 'active', false: ''}[middleDayCategory == 5]" ng-click="clickMiddleDayCategory(5);">
+					化学
+				</a>
+				<a class="tab-item" ng-class="{true: 'active', false: ''}[middleDayCategory == 6]" ng-click="clickMiddleDayCategory(6);">
+					综合
+				</a>
+			</div>
+		</div>
+
+		<ion-content style="top: 93px;">
+
+			<ion-list>
+				<div class="am-margin-top-sm">
+					<!--<ion-item class="item-icon-right" href="#">
+					</ion-item>-->
+				</div>
+			</ion-list>
+
+		</ion-content>
+	</body>
+
+</html>
+
+<script src="/js/lazyload.js"></script>
+<script>
+	LazyLoad.js(["/js/ionic.bundle.min.js", "/js/angular-cookies.js", "/js/app.js"], function () {
+		var app = angular.module("App", ["ionic", "ngCookies"])
+			.controller("VideoIndexController", function($scope, $http, $timeout, $ionicLoading, $cookieStore) {
+				$scope.isActive = true;
+				$scope.primaryCategory = 1;
+				$scope.middleDayCategory = 1;
+
+				if(isApp) {
+					window.location.href = "webviewplus://" + encodeURIComponent("{\"action\":\"" + ActionSetTitle + "\",\"data\":{\"text\":\"微视频\"}}");
+				}
+
+				$scope.clickPrimary = function() {
+					$scope.isActive = true;
+				}
+
+				$scope.clickMiddle = function() {
+					$scope.isActive = false;
+				}
+
+				$scope.clickPrimaryCategory = function(category) {
+					$scope.primaryCategory = category;
+				}
+
+				$scope.clickMiddleDayCategory = function(category) {
+					$scope.middleDayCategory = category;
+				}
+
+				$scope.loading = true;
+			});
+	});
+</script>

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<title>上海市闸北区大宁国际学校</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+		<link rel="stylesheet" href="/css/amazeui.css">
+		<link rel="stylesheet" href="/css/ionic.min.css">
+		<link rel="stylesheet" href="/css/app.css">
+	</head>
+
+	<body ng-app="App" ng-controller="NoticeIndexController">
+
+		<div id="empty" ng-show="isEmpty">
+	    	<div class="empty-container">
+	    		<i class="icon material-icons empty-icon">&#xe14d;</i>
+				<p class="empty-text">没有数据</p>
+			</div>
+		</div>
+
+		<div id="loading" ng-hide="loading">
+	    	<div class="sk-wandering-cubes">
+				<div class="sk-cube sk-cube1"></div>
+				<div class="sk-cube sk-cube2"></div>
+			</div>
+		</div>
+
+		<ion-content>
+
+			<ion-list>
+				<ion-item ng-repeat="notice in noticeList" ng-click="clickItem(notice)">
+					<i class="icon material-icons icon-isRead" ng-show="notice.isNew">&#xe3fa;</i>
+					<div class="am-text-truncate am-margin-left-xs"><span class="am-badge am-badge-danger am-round"></span>{{notice.title}}</div>
+					<div class="am-text-truncate am-margin-left-xs">{{notice.createTime}}</div>
+				</ion-item>
+			</ion-list>
+
+			<ion-infinite-scroll on-infinite="load()" ng-if="isMore">
+			</ion-infinite-scroll>
+
+		</ion-content>
+	</body>
+
+</html>
+
+<script src="/js/lazyload.js"></script>
+<script>
+	LazyLoad.js(["/js/ionic.bundle.min.js", "/js/angular-cookies.js", "/js/app.js"], function () {
+		var app = angular.module("App", ["ionic", "ngCookies"])
+			.controller("NoticeIndexController", function($scope, $http, $timeout, $ionicLoading, $cookieStore) {
+				var userId = $cookieStore.get(CookieUserId);
+				var page = 1;
+				var limit = 10;
+				$scope.isLoad = false;
+				$scope.isMore = true;
+				$scope.isEmpty = false;
+				$scope.noticeList = [];
+
+				if(isApp) {
+					window.location.href = "webviewplus://" + encodeURIComponent("{\"action\":\"" + ActionSetTitle + "\",\"data\":{\"text\":\"我的通知\"}}");
+				}
+
+				$scope.clickItem = function(notice) {
+					for (var i = 0; i < $scope.noticeList.length; i++) {
+						if($scope.noticeList[i].id == notice.id) {
+							$scope.noticeList[i].isNew = false;
+						}
+					}
+
+					window.location.href = "/notice/detail.html?id=" + notice.id;
+				}
+
+				$scope.load = function() {
+					if ($scope.isLoad) {
+						return;
+					}
+
+					$scope.isLoad = true;
+
+					$http({
+						method: "POST",
+						url: "/api/notice/list",
+						headers: {
+							"Content-Type": "application/json;charset=utf-8"
+						},
+						data: {
+							userId: userId,
+							page: page,
+							limit: limit
+						}
+					}).success(function(response) {
+						if (response.result) {
+							var list = response.data;
+							for (var i = 0; i < list.length; i++) {
+								$scope.noticeList.push(list[i]);
+							}
+
+							if (list.length == limit) {
+								$scope.isLoad = false;
+								page++;
+							}
+
+							if(list.length < limit) {
+								$scope.isMore = false;
+							}
+
+							if(page == 1 && list.length == 0) {
+								$scope.isEmpty = true;
+							}
+						}
+
+						$scope.loading = true;
+
+	     				$scope.$broadcast("scroll.infiniteScrollComplete");
+					});
+				}
+
+				getSetting = function(payload) {
+					userId = payload.appUserId;
+
+					$cookieStore.put(CookieUserId, payload.appUserId);
+
+					$scope.load();
+				}
+
+				if(isNullOrEmpty(userId)) {
+					$timeout(function(){
+						window.location.href = "webviewplus://" + encodeURIComponent("{\"action\":\"" + ActionGetSetting + "\",\"data\":{}}");
+				    }, 1);
+				} else {
+					$scope.load();
+				}
+			});
+	});
+</script>

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<title>上海市闸北区大宁国际学校</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+		<link rel="stylesheet" href="/css/amazeui.css">
+		<link rel="stylesheet" href="/css/ionic.min.css">
+		<link rel="stylesheet" href="/css/app.css">
+
+	</head>
+
+	<body ng-app="App" ng-controller="CloudIndexController" class="background-color-2">
+
+		<div id="empty" ng-show="isEmpty">
+	    	<div class="empty-container">
+	    		<i class="icon material-icons empty-icon">&#xe14d;</i>
+				<p class="empty-text">没有数据</p>
+			</div>
+		</div>
+
+		<div id="loading" ng-hide="loading">
+	    	<div class="sk-wandering-cubes">
+				<div class="sk-cube sk-cube1"></div>
+				<div class="sk-cube sk-cube2"></div>
+			</div>
+		</div>
+
+		<ion-header-bar class="background-color-1" style="background-image: none;">
+			<div class="am-center" style="width: 250px;">
+				<div class="button-bar">
+					<button class="button tab-button" ng-class="{true: 'active', false: ''}[isActive]" ng-click="clickPrimary();">个人</button>
+					<button class="button" ng-class="{true: '', false: 'active'}[isActive]" ng-click="clickMiddle();">公共</button>
+				</div>
+			</div>
+		</ion-header-bar>
+
+		<div class="tabs-striped tabs-top background-color-3 ">
+			<div class="tabs">
+				<a class="tab-item" ng-class="{true: 'active', false: ''}[category == 1]" ng-click="clickCategory(1);">
+					分类一
+				</a>
+				<a class="tab-item" ng-class="{true: 'active', false: ''}[category == 2]" ng-click="clickCategory(2);">
+					分类二
+				</a>
+				<a class="tab-item" ng-class="{true: 'active', false: ''}[category == 3]" ng-click="clickCategory(3);">
+					分类三
+				</a>
+				<a class="tab-item" ng-class="{true: 'active', false: ''}[category == 4]" ng-click="clickCategory(4);">
+					分类四
+				</a>
+				<a class="tab-item" ng-class="{true: 'active', false: ''}[category == 5]" ng-click="clickCategory(5);">
+					分类五
+				</a>
+				<a class="tab-item" ng-class="{true: 'active', false: ''}[category == 6]" ng-click="clickCategory(6);">
+					分类六
+				</a>
+			</div>
+		</div>
+
+		<ion-content style="top: 93px;">
+
+			<ion-list>
+				<div class="am-margin-top-sm">
+					<!--<ion-item class="item-icon-right" href="#">
+
+					</ion-item>-->
+				</div>
+			</ion-list>
+
+		</ion-content>
+	</body>
+
+</html>
+
+<script src="/js/lazyload.js"></script>
+<script>
+	LazyLoad.js(["/js/ionic.bundle.min.js", "/js/angular-cookies.js", "/js/app.js"], function () {
+		var app = angular.module("App", ["ionic", "ngCookies"])
+			.controller("CloudIndexController", function($scope, $http, $timeout, $ionicLoading, $cookieStore) {
+				$scope.isActive = true;
+				$scope.category = 1;
+				$scope.isEmpty = false;
+
+				if(isApp) {
+					window.location.href = "webviewplus://" + encodeURIComponent("{\"action\":\"" + ActionSetTitle + "\",\"data\":{\"text\":\"云盘\"}}");
+				}
+
+				$scope.clickPrimary = function() {
+					$scope.isActive = true;
+				}
+
+				$scope.clickMiddle = function() {
+					$scope.isActive = false;
+				}
+
+				$scope.clickCategory = function(index) {
+					$scope.category = index;
+				}
+
+				$scope.loading = true;
+			});
+	});
+</script>

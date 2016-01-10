@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<title>上海市闸北区大宁国际学校</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+		<link rel="stylesheet" href="/css/amazeui.css">
+		<link rel="stylesheet" href="/css/ionic.min.css">
+		<link rel="stylesheet" href="/css/app.css">
+
+		<script src="/js/lazyload.js"></script>
+
+	</head>
+
+	<body ng-app="App" ng-controller="CourseIndexController" class="background-color-2">
+
+		<div id="empty" ng-show="isEmpty">
+	    	<div class="empty-container">
+	    		<i class="icon material-icons empty-icon">&#xe14d;</i>
+				<p class="empty-text">没有数据</p>
+			</div>
+		</div>
+
+		<div id="loading" ng-hide="loading">
+			<div class="sk-wandering-cubes">
+				<div class="sk-cube sk-cube1"></div>
+				<div class="sk-cube sk-cube2"></div>
+			</div>
+		</div>
+
+		<ion-header-bar class="background-color-1" style="background-image: none;">
+			<div class="am-center" style="width: 250px;">
+				<div class="button-bar">
+					<button class="button tab-button" ng-class="{true: 'active', false: ''}[isActive]" ng-click="clickTeacher();">老师课程</button>
+					<button class="button" ng-class="{true: '', false: 'active'}[isActive]" ng-click="clickClass();">班级课程</button>
+				</div>
+			</div>
+		</ion-header-bar>
+
+		<ion-content style="top: 49px;">
+
+			<ion-list ng-show="isActive">
+
+				<div class="am-padding-xs">
+					<label class="item item-input">
+					    <i class="icon ion-search placeholder-icon"></i>
+					    <input type="text" placeholder="搜索老师">
+					</label>
+				</div>
+
+				<ion-item class="item-icon-right" href="/course/teacher.html">
+					黄晨
+	    			<i class="icon material-icons item-note">&#xe5cc;</i>
+				</ion-item>
+				<ion-item class="item-icon-right" href="/course/teacher.html">
+					吴沈刚
+	    			<i class="icon material-icons item-note">&#xe5cc;</i>
+				</ion-item>
+				<ion-item class="item-icon-right" href="/course/teacher.html">
+					徐咏真
+	    			<i class="icon material-icons item-note">&#xe5cc;</i>
+				</ion-item>
+				<ion-item class="item-icon-right" href="/course/teacher.html">
+					吴建泉
+	    			<i class="icon material-icons item-note">&#xe5cc;</i>
+				</ion-item>
+				<ion-item class="item-icon-right" href="/course/teacher.html">
+					董伟国
+	    			<i class="icon material-icons item-note">&#xe5cc;</i>
+				</ion-item>
+				<ion-item class="item-icon-right" href="/course/teacher.html">
+					朱莉华
+	    			<i class="icon material-icons item-note">&#xe5cc;</i>
+				</ion-item>
+				<ion-item class="item-icon-right" href="/course/teacher.html">
+					施珏峰
+	    			<i class="icon material-icons item-note">&#xe5cc;</i>
+				</ion-item>
+				<ion-item class="item-icon-right" href="/course/teacher.html">
+					刘圣吉
+	    			<i class="icon material-icons item-note">&#xe5cc;</i>
+				</ion-item>
+				<ion-item class="item-icon-right" href="/course/teacher.html">
+					陆燕琴
+	    			<i class="icon material-icons item-note">&#xe5cc;</i>
+				</ion-item>
+				<ion-item class="item-icon-right" href="/course/teacher.html">
+					贾瑛
+	    			<i class="icon material-icons item-note">&#xe5cc;</i>
+				</ion-item>
+				<ion-item class="item-icon-right" href="/course/teacher.html">
+					顾俊珅
+	    			<i class="icon material-icons item-note">&#xe5cc;</i>
+				</ion-item>
+				<ion-item class="item-icon-right" href="/course/teacher.html">
+					曹珺
+	    			<i class="icon material-icons item-note">&#xe5cc;</i>
+				</ion-item>
+				<ion-item class="item-icon-right" href="/course/teacher.html">
+					秦霞
+	    			<i class="icon material-icons item-note">&#xe5cc;</i>
+				</ion-item>
+				<ion-item class="item-icon-right" href="/course/teacher.html">
+					陈淼
+	    			<i class="icon material-icons item-note">&#xe5cc;</i>
+				</ion-item>
+				<ion-item class="item-icon-right" href="/course/teacher.html">
+					沙芾
+	    			<i class="icon material-icons item-note">&#xe5cc;</i>
+				</ion-item>
+				<ion-item class="item-icon-right" href="/course/teacher.html">
+					杨扬
+	    			<i class="icon material-icons item-note">&#xe5cc;</i>
+				</ion-item>
+			</ion-list>
+
+			<ion-list ng-show="! isActive">
+				<div class="am-margin-top-sm">
+					<ion-item class="item-icon-right" href="/course/class.html">
+						一年级1班
+		    			<i class="icon material-icons item-note">&#xe5cc;</i>
+					</ion-item>
+					<ion-item class="item-icon-right" href="/course/class.html">
+						一年级2班
+		    			<i class="icon material-icons item-note">&#xe5cc;</i>
+					</ion-item>
+				</div>
+			</ion-list>
+
+		</ion-content>
+	</body>
+
+</html>
+
+<script>
+	LazyLoad.js(["/js/ionic.bundle.min.js", "/js/angular-cookies.js", "/js/app.js"], function () {
+		var app = angular.module("App", ["ionic", "ngCookies"])
+			.controller("CourseIndexController", function($scope, $http, $timeout, $ionicLoading, $cookieStore) {
+				$scope.isActive = true;
+				$scope.isEmpty = false;
+
+				if(isApp) {
+					window.location.href = "webviewplus://" + encodeURIComponent("{\"action\":\"" + ActionSetTitle + "\",\"data\":{\"text\":\"课程\"}}");
+				}
+
+				$scope.clickTeacher = function() {
+					$scope.isActive = true;
+				}
+
+				$scope.clickClass = function() {
+					$scope.isActive = false;
+				}
+
+				$scope.loading = true;
+			});
+	});
+</script>

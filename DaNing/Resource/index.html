@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<title>上海市闸北区大宁国际学校</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+		<link rel="stylesheet" href="/css/amazeui.css">
+		<link rel="stylesheet" href="/css/ionic.min.css">
+		<link rel="stylesheet" href="/css/app.css">
+	</head>
+
+	<body ng-app="App" ng-controller="IndexController">
+		<div id="loading" ng-hide="loading">
+			<div class="sk-wandering-cubes">
+				<div class="sk-cube sk-cube1"></div>
+				<div class="sk-cube sk-cube2"></div>
+			</div>
+		</div>
+
+		<ion-header-bar class="background-color-1" style="background-image: none;">
+			<div class="am-center" style="width: 250px;">
+				<div class="button-bar">
+					<button class="button tab-button" ng-class="{true: 'active', false: ''}[isActive]" ng-click="clickArticle();">校园资讯</button>
+					<button class="button" ng-class="{true: '', false: 'active'}[isActive]" ng-click="clickNotice();">通知公告</button>
+				</div>
+			</div>
+
+		</ion-header-bar>
+
+		<ion-content>
+
+			<ion-slide-box does-continue="true" show-pager="true" auto-play="true" pager-click="" ng-show="isActive">
+				<ion-slide ng-repeat="article in articleBannerList" repeat-done="repeatDone()">
+						<a href="/article/detail.html?id={{article.id}}"><img src="http://daning.nowui.com/{{article.picture}}" class="am-img-responsive"></a>
+				</ion-slide>
+			</ion-slide-box>
+
+			<ion-list ng-show="isActive">
+				<ion-item ng-repeat="article in articleList" href="/article/detail.html?id={{article.id}}">
+					<img src="{{article.picture}}" style="float: left; margin-right: 5px; height: 47px;">
+					<div class="am-text-truncate">{{article.title}}</div>
+					<div class="am-text-truncate">{{article.summary}}</div>
+				</ion-item>
+			</ion-list>
+
+			<ion-list ng-show="! isActive">
+				<ion-item ng-repeat="notice in noticeList" href="/notice/detail.html?id={{notice.id}}">
+					<div class="am-text-truncate">{{notice.title}}</div>
+					<div class="am-text-truncate">{{notice.createTime}}</div>
+				</ion-item>
+			</ion-list>
+
+		</ion-content>
+	</body>
+
+</html>
+
+<script src="/js/lazyload.js"></script>
+<script>
+	LazyLoad.js(["/js/ionic.bundle.min.js", "/js/angular-cookies.js", "/js/app.js"], function () {
+		var app = angular.module("App", ["ionic", "ngCookies"])
+			.directive('repeatDone', function() {
+				return function(scope, element, attrs) {
+					if (scope.$last) {
+						scope.$eval(attrs.repeatDone);
+					}
+				}
+			})
+			.controller("IndexController", function($scope, $http, $timeout, $ionicLoading, $ionicSlideBoxDelegate, $cookieStore) {
+				var userId = $cookieStore.get(CookieUserId);
+				$scope.isActive = true;
+				var articlePage = 1;
+				var articleLimit = 10;
+				$scope.articleBannerList = [];
+				$scope.articleList = [];
+				var noticePage = 1;
+				var noticeLimit = 10;
+				$scope.noticeList = [];
+
+				$scope.repeatDone = function() {
+					$ionicSlideBoxDelegate.update();
+				};
+
+				$scope.clickArticle = function() {
+					$scope.isActive = true;
+				}
+
+				$scope.clickNotice = function() {
+					$scope.isActive = false;
+				}
+
+				$scope.loadArticle = function() {
+					$http({
+						method: "POST",
+						url: "/api/article/list",
+						headers: {
+							"Content-Type": "application/json;charset=utf-8"
+						},
+						data: {
+							page: articlePage,
+							limit: articleLimit
+						}
+					}).success(function(response) {
+						if (response.result) {
+							var list = response.data;
+							for (var i = 0; i < list.length; i++) {
+								var article = list[i];
+								if(i < 2) {
+									$scope.articleBannerList.push(article);
+								} else {
+									article.picture = imageUrl + article.picture.replace("/upload/images/", "/upload/_thumbs/Images/");
+
+									$scope.articleList.push(article);
+								}
+							}
+						}
+
+						$scope.loading = true;
+					});
+				}
+
+				$scope.loadNotice = function() {
+					$http({
+						method: "POST",
+						url: "/api/notice/list",
+						headers: {
+							"Content-Type": "application/json;charset=utf-8"
+						},
+						data: {
+							userId: userId,
+							page: noticePage,
+							limit: noticeLimit
+						}
+					}).success(function(response) {
+						if (response.result) {
+							var list = response.data;
+							for (var i = 0; i < list.length; i++) {
+								var notice = list[i];
+								$scope.noticeList.push(notice);
+							}
+						}
+					});
+				}
+
+				getSetting = function(payload) {
+					userId = payload.appUserId;
+
+					var expireDate = new Date();
+					expireDate.setDate(expireDate.getDate() + 999);
+
+					$cookieStore.put(CookieUserId, payload.appUserId, {"expires": expireDate});
+					$cookieStore.put(CookieUserName, payload.appUserName, {"expires": expireDate});
+
+					$scope.loadArticle();
+					$scope.loadNotice();
+				}
+
+				if(isNullOrEmpty(userId)) {
+					$timeout(function() {
+						window.location.href = "webviewplus://" + encodeURIComponent("{\"action\":\"" + ActionGetSetting + "\",\"data\":{}}");
+				    }, 1);
+				} else {
+					$scope.loadArticle();
+					$scope.loadNotice();
+				}
+			});
+	});
+</script>

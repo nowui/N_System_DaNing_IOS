@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<title>上海市闸北区大宁国际学校</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+		<link rel="stylesheet" href="/css/amazeui.css">
+		<link rel="stylesheet" href="/css/ionic.min.css">
+		<link rel="stylesheet" href="/css/app.css">
+	</head>
+
+	<body ng-app="App" ng-controller="ApplicationController" class="background-color-2">
+		<div id="loading" ng-hide="loading">
+	    	<div class="sk-wandering-cubes">
+				<div class="sk-cube sk-cube1"></div>
+				<div class="sk-cube sk-cube2"></div>
+			</div>
+		</div>
+
+		<ion-content>
+
+			<ion-list>
+				<div class="am-margin-top-sm">
+					<ion-item>
+						<div>信息门户</div>
+					</ion-item>
+					<ion-item>
+						<div class="am-avg-sm-4">
+							<li class="am-cf" style="height: 80px;" ng-click="clickPortalBasic();">
+								<i class="am-icon-btn button-color-0 am-center">
+							    	<i class="icon material-icons icon-button-item">&#xe0af;</i>
+							  	</i>
+							    <i class="am-center am-text-center am-margin-top-xs" style="font-size: 14px;">学校概况</i>
+							</li>
+							<li class="am-cf" style="height: 80px;" ng-click="clickArticle();">
+								<i class="am-icon-btn button-color-1 am-center">
+							    	<i class="icon material-icons icon-button-item">&#xe85d;</i>
+							  	</i>
+							    <i class="am-center am-text-center am-margin-top-xs" style="font-size: 14px;">校园资讯</i>
+							</li>
+							<li class="am-cf" style="height: 80px;" ng-click="clickPortalView();">
+								<i class="am-icon-btn button-color-2 am-center">
+							    	<i class="icon material-icons icon-button-item">&#xe410;</i>
+							  	</i>
+							    <i class="am-center am-text-center am-margin-top-xs" style="font-size: 14px;">校园风光</i>
+							</li>
+						</div>
+					</ion-item>
+				</div>
+
+				<div class="am-margin-top-sm">
+					<ion-item>
+						<div>移动办公</div>
+					</ion-item>
+					<ion-item>
+						<div class="am-avg-sm-4">
+							<li class="am-cf" style="height: 80px;" ng-click="clickTask();">
+								<i class="am-icon-btn button-color-3 am-center">
+							    	<i class="icon material-icons icon-button-item" ng-hide="isTask">&#xe614;</i>
+							    	<i class="icon material-icons icon-button-item" style="position:relative;right:-12px;top:0px;" ng-show="isTask">&#xe614;</i>
+							    	<span class="am-badge am-round background-color-4" style="font-size: 14px;position:relative;right:-3px;top:-20px;" ng-show="isTask">{{taskCount}}</span>
+							  	</i>
+							    <i class="am-center am-text-center am-margin-top-xs" style="font-size: 14px;">待办</i>
+
+							</li>
+							<li class="am-cf" style="height: 80px;" ng-click="clickSchedule();">
+								<i class="am-icon-btn button-color-4 am-center">
+							    	<i class="icon material-icons icon-button-item">&#xe616;</i>
+							  	</i>
+							    <i class="am-center am-text-center am-margin-top-xs" style="font-size: 14px;">日程</i>
+							</li>
+							<li class="am-cf" style="height: 80px;" ng-click="clickNotice();">
+								<i class="am-icon-btn button-color-5 am-center">
+							    	<i class="icon material-icons icon-button-item" ng-hide="isNotice">&#xe7f5;</i>
+							    	<i class="icon material-icons icon-button-item" style="position:relative;right:-12px;top:0px;" ng-show="isNotice">&#xe7f5;</i>
+							    	<span class="am-badge am-round background-color-4" style="font-size: 14px;position:relative;right:-3px;top:-20px;" ng-show="isNotice">{{noticeCount}}</span>
+							  	</i>
+							    <i class="am-center am-text-center am-margin-top-xs" style="font-size: 14px;">通知</i>
+							</li>
+							<li class="am-cf" style="height: 80px;" ng-click="clickMeeting();">
+								<i class="am-icon-btn button-color-6 am-center">
+									<i class="icon material-icons icon-button-item" ng-hide="isMeeting">&#xe8f9;</i>
+							    	<i class="icon material-icons icon-button-item" style="position:relative;right:-12px;top:0px;" ng-show="isMeeting">&#xe8f9;</i>
+							    	<span class="am-badge am-round background-color-4" style="font-size: 14px;position:relative;right:-3px;top:-20px;" ng-show="isMeeting">{{meetingCount}}</span>
+							  	</i>
+							    <i class="am-center am-text-center am-margin-top-xs" style="font-size: 14px;">会议</i>
+							</li>
+						</div>
+						<div class="am-avg-sm-4 am-margin-top">
+							<li class="am-cf" style="height: 80px;" ng-click="clickCourse();">
+								<i class="am-icon-btn button-color-7 am-center">
+							    	<i class="icon material-icons icon-button-item">&#xe051;</i>
+							  	</i>
+							    <i class="am-center am-text-center am-margin-top-xs" style="font-size: 14px;">课程</i>
+							</li>
+							<li class="am-cf" style="height: 80px;" ng-click="clickLeave();">
+								<i class="am-icon-btn button-color-8 am-center">
+							    	<i class="icon material-icons icon-button-item">&#xe889;</i>
+							  	</i>
+							    <i class="am-center am-text-center am-margin-top-xs" style="font-size: 14px;">请假</i>
+							</li>
+							<li class="am-cf" style="height: 80px;" ng-click="clickLogistics();">
+								<i class="am-icon-btn button-color-9 am-center">
+							    	<i class="icon material-icons icon-button-item">&#xe8df;</i>
+							  	</i>
+							    <i class="am-center am-text-center am-margin-top-xs" style="font-size: 14px;">后勤</i>
+							</li>
+							<!--<li class="am-cf" style="height: 80px;" ng-click="clickEnroll();">
+								<i class="am-icon-btn button-color-10 am-center">
+							    	<i class="icon material-icons icon-button-item">&#xe895;</i>
+							  	</i>
+							    <i class="am-center am-text-center am-margin-top-xs" style="font-size: 14px;">报名</i>
+							</li>-->
+						</div>
+					</ion-item>
+				</div>
+
+				<div class="am-margin-top-sm am-margin-bottom-sm">
+					<ion-item>
+						<div>移动资源</div>
+					</ion-item>
+					<ion-item>
+						<div class="am-avg-sm-4">
+							<li class="am-cf" style="height: 80px;" ng-click="clickCloud();">
+								<i class="am-icon-btn button-color-11 am-center">
+							    	<i class="icon material-icons icon-button-item">&#xe2c2;</i>
+							  	</i>
+							    <i class="am-center am-text-center am-margin-top-xs" style="font-size: 14px;">云盘</i>
+							</li>
+							<li class="am-cf" style="height: 80px;" ng-click="clickLibrary();">
+								<i class="am-icon-btn button-color-12 am-center">
+							    	<i class="icon material-icons icon-button-item">&#xe31e;</i>
+							  	</i>
+							    <i class="am-center am-text-center am-margin-top-xs" style="font-size: 14px;">eLibrary</i>
+							</li>
+							<li class="am-cf" style="height: 80px;" ng-click="clickVideo();">
+								<i class="am-icon-btn button-color-13 am-center">
+							    	<i class="icon material-icons icon-button-item">&#xe63a;</i>
+							  	</i>
+							    <i class="am-center am-text-center am-margin-top-xs" style="font-size: 14px;">微视频</i>
+							</li>
+							<li class="am-cf" style="height: 80px;" ng-click="clickScore();">
+								<i class="am-icon-btn button-color-14 am-center">
+							    	<i class="icon material-icons icon-button-item">&#xe8b6;</i>
+							  	</i>
+							    <i class="am-center am-text-center am-margin-top-xs" style="font-size: 14px;">成绩查询</i>
+							</li>
+						</div>
+					</ion-item>
+				</div>
+			</ion-list>
+
+		</ion-content>
+	</body>
+
+</html>
+
+<script src="/js/lazyload.js"></script>
+<script>
+	LazyLoad.js(["/js/ionic.bundle.min.js", "/js/angular-cookies.js", "/js/app.js"], function () {
+		var app = angular.module("App", ["ionic", "ngCookies"])
+			.controller('ApplicationController', function($scope, $http, $timeout, $ionicLoading, $cookieStore) {
+				var userId = $cookieStore.get(CookieUserId);
+				$scope.isTask = false;
+				$scope.isNotice = false;
+				$scope.isMeeting = false;
+
+				$scope.taskCount = 0;
+				$scope.noticeCount = 0;
+				$scope.meetingCount = 0;
+
+				$scope.clickPortalBasic = function() {
+					window.location.href = "/portal/basic.html";
+				}
+
+				$scope.clickArticle = function() {
+					window.location.href = "/article/index.html";
+				}
+
+				$scope.clickPortalView = function() {
+					window.location.href = "/portal/view.html";
+				}
+
+				$scope.clickTask = function() {
+					window.location.href = "/task/index.html";
+				}
+
+				$scope.clickSchedule = function() {
+					window.location.href = "/schedule/index.html";
+				}
+
+				$scope.clickNotice = function() {
+					window.location.href = "/notice/index.html";
+				}
+
+				$scope.clickMeeting = function() {
+					window.location.href = "/meeting/index.html";
+				}
+
+				$scope.clickCourse = function() {
+					window.location.href = "/course/index.html";
+				}
+
+				$scope.clickLeave = function() {
+					window.location.href = "/leave/index.html";
+				}
+
+				$scope.clickLogistics = function() {
+					window.location.href = "/logistics/index.html";
+				}
+
+				$scope.clickEnroll = function() {
+					window.location.href = "/enroll/index.html";
+				}
+
+				$scope.clickCloud = function() {
+					window.location.href = "/cloud/index.html";
+				}
+
+				$scope.clickLibrary = function() {
+					window.location.href = "/library/index.html";
+				}
+
+				$scope.clickVideo = function() {
+					window.location.href = "/video/index.html";
+				}
+
+				$scope.clickScore = function() {
+					window.location.href = "/score/index.html";
+				}
+
+				getStart = function(payload) {
+					$http({
+						method: "POST",
+						url: "/api/application/count",
+						headers: {
+							"Content-Type": "application/json;charset=utf-8"
+						},
+						data: {
+							userId: userId
+						}
+					}).success(function(response) {
+						if (response.result) {
+							if(response.data.taskCount == "0") {
+								$scope.isTask = false;
+							} else {
+								$scope.isTask = true;
+							}
+
+							if(response.data.noticeCount == "0") {
+								$scope.isNotice = false;
+							} else {
+								$scope.isNotice = true;
+							}
+
+							if(response.data.meetingCount == "0") {
+								$scope.isMeeting = false;
+							} else {
+								$scope.isMeeting = true;
+							}
+
+							$scope.taskCount = response.data.taskCount;
+							$scope.noticeCount = response.data.noticeCount;
+							$scope.meetingCount = response.data.meetingCount;
+						}
+
+						$scope.loading = true;
+					});
+				}
+
+				getSetting = function(payload) {
+					userId = payload.appUserId;
+
+					var expireDate = new Date();
+					expireDate.setDate(expireDate.getDate() + 999);
+
+					$cookieStore.put(CookieUserId, payload.appUserId, {"expires": expireDate});
+					$cookieStore.put(CookieUserName, payload.appUserName, {"expires": expireDate});
+
+					getStart();
+				}
+
+				getPush = function(payload) {
+					getStart();
+				}
+
+				if(isNullOrEmpty(userId)) {
+					$timeout(function() {
+						window.location.href = "webviewplus://" + encodeURIComponent("{\"action\":\"" + ActionGetSetting + "\",\"data\":{}}");
+				    }, 1);
+				} else {
+					getStart();
+				}
+
+				$scope.loading = true;
+			});
+
+	});
+</script>

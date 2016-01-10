@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<title>上海市闸北区大宁国际学校</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+		<link rel="stylesheet" href="/css/amazeui.css">
+		<link rel="stylesheet" href="/css/ionic.min.css">
+		<link rel="stylesheet" href="/css/app.css">
+
+		<script src="/js/lazyload.js"></script>
+
+	</head>
+
+	<body ng-app="App" ng-controller="EnrollDetailController" class="background-color-2">
+		<div id="loading" ng-hide="loading">
+	    	<div class="sk-wandering-cubes">
+				<div class="sk-cube sk-cube1"></div>
+				<div class="sk-cube sk-cube2"></div>
+			</div>
+		</div>
+
+		<ion-content>
+			<ion-list>
+				<div class="am-g am-margin-top-sm">
+					<ion-item>
+	    				请假类型
+	    				<span class="item-note">{{score.type}}</span>
+					</ion-item>
+				</div>
+
+				<div class="am-g am-margin-top-sm">
+					<ion-item>
+						开始时间
+	    				<span class="item-note">{{score.startTime}}</span>
+					</ion-item>
+					<ion-item>
+						结束时间
+	    				<span class="item-note">{{score.endTime}}</span>
+					</ion-item>
+				</div>
+
+				<div class="am-g am-margin-top-sm">
+					<ion-item>
+						请假理由
+						<div class="am-margin-top-sm item-note-font">sdfsdfsdfsd</div>
+					</ion-item>
+				</div>
+			</ion-list>
+		</ion-content>
+	</body>
+
+</html>
+
+<script>
+	LazyLoad.js(["/js/ionic.bundle.min.js", "/js/angular-cookies.js", "/js/app.js"], function () {
+		var app = angular.module("App", ["ionic", "ngCookies"])
+			.controller("EnrollDetailController", function($scope, $http, $timeout, $ionicLoading, $cookieStore) {
+				if(isApp) {
+					window.location.href = "webviewplus://" + encodeURIComponent("{\"action\":\"" + ActionSetTitle + "\",\"data\":{\"text\":\"请假详情\"}}");
+				}
+
+				formatEnrollType = function(val) {
+				    if (val == "SJ") {
+				        return "事假";
+				    } else if (val == "BJ") {
+				        return "病假";
+				    } else if (val == "HJ") {
+				        return "婚假";
+				    } else if (val == "CJ") {
+				        return "产假";
+				    }
+				}
+
+				$http({
+					method: "POST",
+					url: "/api/score/find",
+					headers: {
+						"Content-Type": "application/json;charset=utf-8"
+					},
+					data: {
+						id: getUrlParam("id")
+					}
+				}).success(function(response) {
+					if (response.result) {
+						$scope.score = response.data;
+
+						$scope.score.type = formatEnrollType($scope.score.type);
+					}
+
+					$scope.loading = true;
+				});
+			})
+			.filter('trustHtml', function ($sce) {
+		        return function (input) {
+		            return $sce.trustAsHtml(input);
+		        }
+		    });
+	});
+</script>
