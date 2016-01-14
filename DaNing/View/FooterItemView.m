@@ -20,11 +20,11 @@
 
 @synthesize myDelegate;
 
-- (id)init:(NSDictionary *)payload {
+- (id)init:(int)count widthPayload:(NSDictionary *)payload {
     self = [super init];
     if (self) {
-        float width = self.frame.size.width;
-        float height = self.frame.size.height;
+        float width = ScreenWidth / count;
+        float height = TabBarHeight;
         
         iconLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 2, width, height / 2)];
         [iconLabel setText:[payload objectForKey:KeyIcon]];

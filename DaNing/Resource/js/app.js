@@ -13,6 +13,7 @@ var ActionSetGo = "setGo";
 var ActionSetBack = "setBack";
 var ActionSetBackAndRefresh = "setBackAndRefresh";
 var ActionSetClickHeaderRightButton = "setClickHeaderRightButton";
+var ActionSetPreviewImage = "setPreviewImage";
 
 var CookieAccount = "Account";
 var CookieUserId = "UserId";
@@ -20,6 +21,8 @@ var CookieUserName = "UserName";
 
 var HideDelay = 500;
 var WaitDelay = 1500;
+
+var LoadingTemplate = "<ion-spinner icon=\"android\" class=\"spinner-light\" />";
 
 var imageUrl = "http://daning.nowui.com";
 

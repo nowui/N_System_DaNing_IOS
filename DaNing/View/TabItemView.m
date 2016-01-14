@@ -48,7 +48,7 @@
         [self addSubview:view];
         
         label = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, width, height)];
-        [label setText:@"123"];
+        [label setText:[payload objectForKey:KeyText]];
         [label setBackgroundColor:[UIColor clearColor]];
         [label setFont:[UIFont boldSystemFontOfSize:14]];
         [label setLineBreakMode:NSLineBreakByWordWrapping];

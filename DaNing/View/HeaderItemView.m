@@ -39,7 +39,7 @@
         }
         [titleLabel setTextColor:HeaderTitleColor];
         [titleLabel setBackgroundColor:[UIColor clearColor]];
-        [titleLabel setFont:[UIFont boldSystemFontOfSize:18]];
+        [titleLabel setFont:[UIFont boldSystemFontOfSize:20]];
         [titleLabel setTextAlignment:NSTextAlignmentCenter];
         [self addSubview:titleLabel];
         
@@ -56,7 +56,7 @@
         [rightButton setFrame:CGRectMake(ScreenWidth - width - 5, 0, width, width)];
         [rightButton addTarget:self action:@selector(clickRightButton:) forControlEvents:UIControlEventTouchUpInside];
         [rightButton setTitle:@"" forState:UIControlStateNormal];
-        [rightButton.titleLabel setFont:[UIFont systemFontOfSize:18]];
+        [rightButton.titleLabel setFont:[UIFont systemFontOfSize:17]];
         [self addSubview:rightButton];
         
     }

@@ -14,7 +14,7 @@
             buildForArchiving = "YES">
             <BuildableReference
                BuildableIdentifier = 'primary'
-               BlueprintIdentifier = '7413C2133ADEB676F522D30A'
+               BlueprintIdentifier = '906ECB35475287DD510FA0C6'
                BlueprintName = 'TKRoundedView'
                ReferencedContainer = 'container:Pods.xcodeproj'
                BuildableName = 'libTKRoundedView.a'>

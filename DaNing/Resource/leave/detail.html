@@ -1,249 +1,116 @@
 <!DOCTYPE html>
 <html>
 
-	<head>
-		<title>上海市闸北区大宁国际学校</title>
-		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<head>
+    <title>上海市闸北区大宁国际学校</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="format-detection"content="telephone=no, email=no" />
+    <link rel="stylesheet" href="/css/ionic.min.css">
+    <link rel="stylesheet" href="/css/mobiscroll.custom-2.17.1.min.css">
+    <link rel="stylesheet" href="/css/app.css">
+    <script src="/js/ionic.bundle.min.js"></script>
+    <script src="/js/angular-cookies.js"></script>
+    <script src="/js/taggedInfiniteScroll.min.js"></script>
+    <script src="/js/zepto.min.js"></script>
+    <script src="/js/mobiscroll.custom-2.17.1.min.js"></script>
+    <script src="/js/app.js"></script>
+</head>
 
-		<link rel="stylesheet" href="/css/amazeui.css">
-		<link rel="stylesheet" href="/css/ionic.min.css">
-		<link rel="stylesheet" href="/css/app.css">
-	</head>
-
-	<body ng-app="App" ng-controller="LeaveDetailController" class="background-color-2">
-		<div id="loading" ng-hide="loading">
-	    	<div class="sk-wandering-cubes">
-				<div class="sk-cube sk-cube1"></div>
-				<div class="sk-cube sk-cube2"></div>
+<body ng-app="App" ng-controller="Controller">
+	<ion-list>
+		<ion-item class="item-icon-right" ng-click="clickType();">
+			请假类型
+			<div style="display:none;">
+			<select id="type" ng-model="leave.type">
+    			<option value="SJ">事假</option>
+			    <option value="BJ">病假</option>
+			    <option value="NJ">年假</option>
+			    <option value="TX">调休</option>
+			    <option value="HJ">婚假</option>
+			    <option value="CJ">产假</option>
+			</select>
 			</div>
-		</div>
-
-		<ion-content>
-			<ion-list>
-				<div class="am-g am-margin-top-sm">
-					<ion-item class="item-icon-right" ng-click="openType();">
-	    				请假类型
-	    				<span class="item-note">{{formatLeaveType(leave.type)}}</span>
-	    				<i class="icon material-icons item-note">&#xe5cc;</i>
-					</ion-item>
-				</div>
-
-				<div class="am-g am-margin-top-sm">
-					<ion-item class="item-input item-icon-right">
-						开始日期
-	    				<input type="date" style="text-align:right; padding-right: 50px;" ng-model="leave.startDate">
-	    				<i class="icon material-icons item-note">&#xe5cc;</i>
-					</ion-item>
-				</div>
-
-				<div class="am-g am-margin-top-sm">
-					<ion-item class="item-input item-icon-right">
-						结束日期
-	    				<input type="date" style="text-align:right; padding-right: 50px;" ng-model="leave.endDate">
-	    				<i class="icon material-icons item-note">&#xe5cc;</i>
-					</ion-item>
-				</div>
-
-				<div class="am-g am-margin-top-sm">
-					<ion-item>
-						请假理由
-						<div class="am-margin-top-sm item-note-font">
-							<textarea class="am-form-field" rows="3" style="width:100%; font-size:14px;" ng-model="leave.content"></textarea>
-						</div>
-					</ion-item>
-				</div>
-			</ion-list>
-
-			<div style="padding-left: 8px; padding-right: 8px;" class="am-g am-margin-top" ng-show="isSubmit">
-				<button type="button" class="am-btn am-btn-xs am-btn-primary am-btn-block" ng-click="submitForm()">确定</button>
+			<span class="item-note">{{leave.type}}</span>
+			<i class="icon material-icons item-note">&#xe5cc;</i>
+		</ion-item>
+		<ion-item class="item-icon-right" ng-click="clickStart();" style="margin-top:10px;">
+			开始日期<input id="start" style="display:none;" ng-model="leave.starTime" />
+			<span class="item-note">{{leave.starTime}}</span>
+			<i class="icon material-icons item-note">&#xe5cc;</i>
+		</ion-item>
+		<ion-item class="item-icon-right" ng-click="clickEnd();">
+			结束日期<input id="end" style="display:none;" ng-model="leave.endTime" />
+			<span class="item-note">{{leave.endTime}}</span>
+			<i class="icon material-icons item-note">&#xe5cc;</i>
+		</ion-item>
+		<ion-item style="margin-top:10px;">
+			<div style="position:absolute;">请假理由</div>
+			<div style="padding-left:80px;">
+				<textarea class="am-form-field" rows="3" style="width:100%; font-size:14px;" ng-model="leave.content"></textarea>
 			</div>
-		</ion-content>
-
-		<script id="leave_type.html" type="text/ng-template">
-			<ion-radio ng-model="leave.type" value="SJ" ng-click="closeType()">事假</ion-radio>
-			<ion-radio ng-model="leave.type" value="BJ" ng-click="closeType();">病假</ion-radio>
-			<ion-radio ng-model="leave.type" value="HJ" ng-click="closeType();">婚假</ion-radio>
-			<ion-radio ng-model="leave.type" value="CJ" ng-click="closeType();">产假</ion-radio>
-		</script>
-	</body>
+		</ion-item>
+	</ion-list>
+</body>
 
 </html>
-
-<script src="/js/lazyload.js"></script>
 <script>
-	LazyLoad.js(["/js/ionic.bundle.min.js", "/js/angular-cookies.js", "/js/app.js"], function () {
-		var processInstanceId = "";
+(function() {
+var app = angular.module("App", ["ionic", "ngCookies", "tagged.directives.infiniteScroll"])
+    .controller('Controller', function($scope, $http, $ionicLoading, $timeout, $cookieStore) {
+    	var userId = $cookieStore.get(CookieUserId);
+    	$scope.leave = {};
 
-		/*Jockey.on(EventClickHeaderRightButton + "-" + urlString, function(payload) {
-			if(processInstanceId != "") {
-				window.location.href = "/workflow/image.html?processInstanceId=" + processInstanceId;
-			}
-		});*/
+        if(isApp) {
+			window.location.href = "webviewplus://" + encodeURIComponent("{\"action\":\"" + ActionSetTitle + "\",\"data\":{\"text\":\"我的请假\"}}");
+		}
 
-		var app = angular.module("App", ["ionic", "ngCookies"])
-			.controller("LeaveDetailController", function($scope, $http, $timeout, $ionicLoading, $cookieStore, $ionicPopup) {
-				var userId = $cookieStore.get(CookieUserId);
-				var id = "";
-				var action = "save";
-				$scope.isSubmit = true;
-				$scope.leave = {}
+		$('#type').mobiscroll().select({
+	        theme: 'ios',
+	        lang: 'zh',
+	        display: 'bottom'
+	    });
 
-				if(isApp) {
-					window.location.href = "webviewplus://" + encodeURIComponent("{\"action\":\"" + ActionSetTitle + "\",\"data\":{\"text\":\"我的请假\",\"right\":\"流程图\"}}");
-				}
+	    $('#type').hide();
 
-				setClickHeaderRightButton = function(payload) {
-					window.location.href = "/workflow/image.html?processInstanceId=" + $scope.leave.processInstanceId;
-				}
+		$('#start').mobiscroll().date({
+	        theme: 'ios',
+	        lang: 'zh',
+	        dateFormat: 'yyyy-mm-dd',
+	        display: 'bottom'
+	    });
 
-				$scope.leave.startDate = new Date();
-				$scope.leave.endDate = new Date();
+		$('#end').mobiscroll().date({
+	        theme: 'ios',
+	        lang: 'zh',
+	        dateFormat: 'yyyy-mm-dd',
+	        display: 'bottom'
+	    });
 
-				$scope.formatLeaveType = function(val) {
-				    if (val == "SJ") {
-				        return "事假";
-				    } else if (val == "BJ") {
-				        return "病假";
-				    } else if (val == "HJ") {
-				        return "婚假";
-				    } else if (val == "CJ") {
-				        return "产假";
-				    }
-				}
+		$scope.clickType = function() {
+			$('#type').mobiscroll('show');
+		}
 
-				$scope.openType = function() {
-					$scope.typePopup = $ionicPopup.show({
-						title: "<strong>选择请假类型</strong>",
-						templateUrl: "leave_type.html",
-						scope: $scope
-					});
-				}
+		$scope.clickStart = function() {
+			$('#start').mobiscroll('show');
+		}
 
-				$scope.closeType = function() {
-					$scope.typePopup.close();
-				}
+		$scope.clickEnd = function() {
+			$('#end').mobiscroll('show');
+		}
 
-				find = function() {
-					$http({
-						method: "POST",
-						url: "/api/leave/find",
-						headers: {
-							"Content-Type": "application/json;charset=utf-8"
-						},
-						data: {
-							id: id
-						}
-					}).success(function(response) {
-						if (response.result) {
-							$scope.leave = response.data;
-
-							$scope.leave.startDate = new Date(response.data.startTime.replaceAll("-", "/"));
-							$scope.leave.endDate = new Date(response.data.endTime.replaceAll("-", "/"));
-
-							$scope.loading = true;
-						} else {
-							$ionicLoading.show({
-								template: response.message,
-						      	duration: WaitDelay
-						    });
-						}
-					});
-				}
-
-				saveOrUpdate = function() {
-					var message = "";
-
-					if(isNullOrEmpty($scope.leave.type)) {
-						message += "请选择请假类型!<br/>";
-					}
-
-					if(isNullOrEmpty($scope.leave.content)) {
-						message += "请填写请假理由!";
-					}
-
-					if(! isNullOrEmpty(message)) {
-						$ionicLoading.show({
-							template: message,
-					      	duration: WaitDelay
-					    });
-
-					    return;
-					}
-
-					$ionicLoading.show({
-						template: "<ion-spinner icon=\"android\" class=\"spinner-light\"></ion-spinner>"
-				    });
-
-					$http({
-						method: "POST",
-						url: "/api/leave/" + action,
-						headers: {
-							"Content-Type": "application/json;charset=utf-8"
-						},
-						data: {
-							id: id,
-							type: $scope.leave.type,
-							starTime: $scope.leave.startDate.Format("yyyy-MM-dd") + " 00:00:00",
-							endTime: $scope.leave.endDate.Format("yyyy-MM-dd") + " 00:00:00",
-							content: $scope.leave.content,
-							processInstanceId: "",
-							taskName: "",
-							userId: userId
-						}
-					}).success(function(response) {
-						if (response.result) {
-							$ionicLoading.show({
-								template: "提交成功!",
-						      	duration: WaitDelay
-						    });
-
-							$timeout(function(){
-								window.location.href = "webviewplus://" + encodeURIComponent("{\"action\":\"" + ActionSetBackAndRefresh + "\",\"data\":{}}");
-						    }, WaitDelay);
-						} else {
-							$ionicLoading.show({
-								template: response.message,
-						      	duration: WaitDelay
-						    });
-						}
-					});
-				}
-
-				getSetting = function(payload) {
-					userId = payload.appUserId;
-
-					$cookieStore.put(CookieUserId, payload.appUserId);
-
-					saveOrUpdate();
-				}
-
-				$scope.submitForm = function() {
-					if(isNullOrEmpty(userId)) {
-						$timeout(function(){
-							window.location.href = "webviewplus://" + encodeURIComponent("{\"action\":\"" + ActionGetSetting + "\",\"data\":{}}");
-					    }, 1);
-					} else {
-						saveOrUpdate();
-					}
-				}
-
-				if(! isNullOrEmpty(getUrlParam("id"))) {
-					$scope.isSubmit = false;
-
-					id = getUrlParam("id");
-
-					action = "update";
-
-					find();
-				} else {
-					$scope.loading = true;
-				}
-			})
-			.filter('trustHtml', function ($sce) {
-		        return function (input) {
-		            return $sce.trustAsHtml(input);
-		        }
-		    });
+		$scope.formatType = function(val) {
+			console.log(val);
+		    if (val == "SJ") {
+		        return "事假";
+		    } else if (val == "BJ") {
+		        return "病假";
+		    } else if (val == "HJ") {
+		        return "婚假";
+		    } else if (val == "CJ") {
+		        return "产假";
+		    }
+		}
 	});
+})();
 </script>

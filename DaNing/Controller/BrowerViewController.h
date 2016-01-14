@@ -10,7 +10,7 @@
 
 @protocol BrowerViewControllerDelegate
 
-- (void)didGoBrowerControllerBrowerViewControllerDelegate:(NSString *)string;
+- (void)didSwitchBrowerControllerBrowerViewControllerDelegate:(NSString *)string;
 - (void)didBackAndRefreshBrowerViewControllerDelegate:(int)position;
 
 @end

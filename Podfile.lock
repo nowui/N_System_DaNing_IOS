@@ -20,7 +20,13 @@ PODS:
   - AFNetworking/UIKit (2.5.4):
     - AFNetworking/NSURLConnection
     - AFNetworking/NSURLSession
+  - DACircularProgress (2.3.1)
   - JPush (1.8.5)
+  - MBProgressHUD (0.9.1)
+  - MWPhotoBrowser (2.1.1):
+    - DACircularProgress (~> 2.3)
+    - MBProgressHUD (~> 0.9)
+    - SDWebImage (!= 3.7.2, ~> 3.7)
   - SDWebImage (3.7.3):
     - SDWebImage/Core (= 3.7.3)
   - SDWebImage/Core (3.7.3)
@@ -31,6 +37,7 @@ PODS:
 DEPENDENCIES:
   - AFNetworking (~> 2.5.3)
   - JPush (~> 1.8.5)
+  - MWPhotoBrowser (~> 2.1.1)
   - SDWebImage (~> 3.7.2)
   - SVPullToRefresh (~> 0.4.1)
   - TKRoundedView (~> 0.5)
@@ -38,7 +45,10 @@ DEPENDENCIES:
 
 SPEC CHECKSUMS:
   AFNetworking: 05edc0ac4c4c8cf57bcf4b84be5b0744b6d8e71e
+  DACircularProgress: 4dd437c0fc3da5161cb289e07ac449493d41db71
   JPush: ba06a6f866ce11f11c15149e7fa67488a23eec87
+  MBProgressHUD: c47f2c166c126cf2ce36498d80f33e754d4e93ad
+  MWPhotoBrowser: ba0d0c09ffda3a7ea10093518738c502c1c7141c
   SDWebImage: 1d2b1a1efda1ade1b00b6f8498865f8ddedc8a84
   SVPullToRefresh: ba2e718695a43253d8bea6852d2960097dc15d8c
   TKRoundedView: 0886ec88ad9d8f9c1de7503babecfacc06263920

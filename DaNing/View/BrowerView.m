@@ -32,15 +32,15 @@
 - (void)viewWillAppear:(BOOL)animated {
     isLoad = NO;
     
-    NSLog(@"getStart({})");
-    [mainWebView stringByEvaluatingJavaScriptFromString:[NSString stringWithFormat:@"try{getStart({});}catch(e){}"]];
+    //NSLog(@"getStart({})");
+    //[mainWebView stringByEvaluatingJavaScriptFromString:[NSString stringWithFormat:@"try{getStart({});}catch(e){}"]];
 }
 
 - (id)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     if (self) {
         mainWebView = [[UIWebView alloc] initWithFrame:CGRectMake(0, 0, frame.size.width, frame.size.height)];
-        [mainWebView setBackgroundColor:RGBCOLOR(226, 231, 237)];
+        [mainWebView setBackgroundColor:BackgroundColor];
         [mainWebView setDelegate:self];
         [self addSubview:mainWebView];
         
@@ -51,6 +51,9 @@
                 ((UIScrollView *)view).contentSize = CGSizeMake(frame.size.width, frame.size.height);
             }
         }
+        
+        [mainWebView.scrollView setDecelerationRate:UIScrollViewDecelerationRateNormal];
+        [mainWebView.scrollView setDelaysContentTouches:NO];
         
         __weak BrowerView *browerView = self;
         
@@ -109,7 +112,27 @@
 }
 
 - (void)didPushAction {
-    [mainWebView stringByEvaluatingJavaScriptFromString:[NSString stringWithFormat:@"%@({})", ActionGetPush]];
+    NSString *string = [self getUserJson];
+    
+    [mainWebView stringByEvaluatingJavaScriptFromString:[NSString stringWithFormat:@"%@(%@)", ActionGetPush, string]];
+}
+
+- (void)didAppearAction {
+    NSString *string = [self getUserJson];
+    
+    [mainWebView stringByEvaluatingJavaScriptFromString:[NSString stringWithFormat:@"%@(%@)", ActionGetAppear, string]];
+}
+
+- (NSString *)getUserJson {
+    UserModel *userModel = [[UserModel alloc] initWithDictionary:[[Helper shared] getAppUser]];
+    
+    NSMutableDictionary *dictionary = [[NSMutableDictionary alloc] init];
+    [dictionary setObject:userModel.identity forKey:KeyAppUserId];
+    [dictionary setObject:userModel.name forKey:KeyAppUserName];
+    [dictionary setObject:userModel.jpushRegistrationId forKey:KeyJpushRegistrationId];
+    
+    NSData *data = [NSJSONSerialization dataWithJSONObject:dictionary options:NSJSONWritingPrettyPrinted error:nil];
+    return [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
 }
 
 - (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType {
@@ -137,18 +160,8 @@
             }
         } else if ([actionString isEqualToString:ActionGetSetting]) {
             NSLog(@"%@", [[Helper shared] getAppUser]);
-            NSLog(@"-------");
-            UserModel *userModel = [[UserModel alloc] initWithDictionary:[[Helper shared] getAppUser]];
-            //NSString *baiduUserId = @"";
-            //NSString *baiduChannelId = @"";
             
-            NSMutableDictionary *dictionary = [[NSMutableDictionary alloc] init];
-            [dictionary setObject:userModel.identity forKey:KeyAppUserId];
-            [dictionary setObject:userModel.name forKey:KeyAppUserName];
-            [dictionary setObject:userModel.jpushRegistrationId forKey:KeyJpushRegistrationId];
-            
-            NSData *data = [NSJSONSerialization dataWithJSONObject:dictionary options:NSJSONWritingPrettyPrinted error:nil];
-            NSString *string = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+            NSString *string = [self getUserJson];
             
             NSLog(@"getSetting(%@)", string);
             [webView stringByEvaluatingJavaScriptFromString:[NSString stringWithFormat:@"getSetting(%@)", string]];
@@ -157,7 +170,7 @@
             userModel.identity = [payloadDictionary objectForKey:KeyAppUserId];
             userModel.name = [payloadDictionary objectForKey:KeyAppUserName];
             [[Helper shared] setAppUser:[userModel packageDictionary]];
-        } else if ([actionString isEqualToString:ActionSetGo]) {
+        } else if ([actionString isEqualToString:ActionSetSwitch]) {
             if (myDelegate) {
                 //NSLog(@"%@", [[payloadDictionary objectForKey:KeyData] class]);
                 
@@ -167,7 +180,7 @@
                 NSData *jsonData = [NSJSONSerialization dataWithJSONObject:jsonDictionary options:NSJSONWritingPrettyPrinted error:nil];
                 NSString *jsonstring = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
                 
-                [myDelegate didGoBrowerControllerBrowerViewDelegate:jsonstring];
+                [myDelegate didSwitchBrowerControllerBrowerViewDelegate:jsonstring];
             }
         } else if ([actionString isEqualToString:ActionSetBack]) {
             if (myDelegate) {
@@ -177,6 +190,18 @@
             if (myDelegate) {
                 [myDelegate didBackAndRefreshBrowerViewDelegate:(int) self.tag];
             }
+        } else if ([actionString isEqualToString:ActionSetPreviewImage]) {
+            
+            [myDelegate didPreviewImageControllerBrowerViewDelegate:[jsonDictionary objectForKey:KeyData] withPosition:[[jsonDictionary objectForKey:KeyPosition] intValue]];
+        } else if ([actionString isEqualToString:ActionSetNavite]) {
+            
+            [myDelegate didPushBrowerControllerBrowerViewDelegate:[NSString stringWithFormat:@"%@", [payloadDictionary objectForKey:KeyData]]];
+        } else if ([actionString isEqualToString:ActionGetAlert]) {
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:[payloadDictionary objectForKey:KeyTitle] message:@" " delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"确定", nil];
+            [alert setAlertViewStyle:UIAlertViewStylePlainTextInput];
+            UITextField *textField = [alert textFieldAtIndex:0];
+            [textField setPlaceholder:[payloadDictionary objectForKey:KeyPlaceholder]];
+            [alert show];
         }
         
         return NO;
@@ -200,13 +225,24 @@
             
             isLoad = YES;
             
-            [myDelegate didPushBrowerControllerBrowerViewDelegate:url];
+            [myDelegate didPushBrowerControllerBrowerViewDelegate:[NSString stringWithFormat:@"{\"type\": \"OnePage\", \"data\": {\"url\": \"%@\", \"header\": {\"center\": {\"data\": \"\"} } } }", url]];
             
             return NO;
         }
     }
     
     return YES;
+}
+
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+    if (buttonIndex == 1) {
+        UITextField *textField = [alertView textFieldAtIndex:0];
+        
+        NSString *string = [NSString stringWithFormat:@"{\"data\": \"%@\"}", textField.text];
+        
+        NSLog(@"%@(%@)", ActionGetAlert, string);
+        [mainWebView stringByEvaluatingJavaScriptFromString:[NSString stringWithFormat:@"%@(%@)", ActionGetAlert, string]];
+    }
 }
 
 - (void)webViewDidStartLoad:(UIWebView *)webView {

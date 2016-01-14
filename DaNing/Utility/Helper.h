@@ -8,8 +8,9 @@
 
 #import <Foundation/Foundation.h>
 
-//#define WebUrl @"http://daning-app.nowui.com"
-#define WebUrl @"http://localhost:8080"
+//#define WebUrl @"http://run.nowui.com"
+//#define WebUrl @"http://localhost:8888"
+#define WebUrl @"http://192.168.48.187:8888"
 
 
 #define HeaderHttp @"http"
@@ -19,7 +20,7 @@
 #define ScreenHeight [UIScreen mainScreen].bounds.size.height
 #define StatusHeight 20
 #define NavigationHeight 44
-#define TabWidth 280
+#define TabWidth 240
 #define TabHeight 44
 #define NavigationTitleViewWidth 190
 #define TabBarHeight 49
@@ -39,6 +40,8 @@
 #define KeyInitData  @"initData"
 #define KeyType  @"type"
 #define KeyData  @"data"
+#define KeyTitle  @"title"
+#define KeyPlaceholder  @"placeholder"
 #define KeyIcon  @"icon"
 #define KeyHeader  @"header"
 #define KeyCenter  @"center"
@@ -55,6 +58,7 @@
 #define KeyAppUserName  @"appUserName"
 #define KeyIsFinish  @"isFinish"
 #define KeyAction  @"action"
+#define KeyPosition  @"position"
 #define KeyIsZip  @"isZip_1"
 #define KeyPushFilter  @"pushFilter"
 
@@ -63,18 +67,24 @@
 #define ActionSetTitle @"setTitle"
 #define ActionSetSetting @"setSetting"
 #define ActionGetSetting @"getSetting"
-#define ActionSetGo @"setGo"
+#define ActionSetSwitch @"setSwitch"
+#define ActionSetNavite @"setNavite"
 #define ActionSetBack @"setBack"
 #define ActionSetBackAndRefresh @"setBackAndRefresh"
 #define ActionSetClickHeaderRightButton @"setClickHeaderRightButton"
+#define ActionSetPreviewImage @"setPreviewImage"
 #define ActionGetStart @"getStart"
 #define ActionGetPush @"getPush"
+#define ActionGetAppear @"getAppear"
+#define ActionGetAlert @"getAlert"
 
 #define ValueOnePage @"OnePage"
 #define ValueMultiTab @"MultiTab"
 #define ValueMultiFooter @"MultiFooter"
 
 #define RGBCOLOR(r,g,b) [UIColor colorWithRed:(r)/255.0f green:(g)/255.0f blue:(b)/255.0f alpha:1]
+
+#define BackgroundColor [UIColor colorWithRed:246.0f/255.0f green:245.0f/255.0f blue:243.0f/255.0f alpha:1]
 
 #define HeaderBackgroundColor [UIColor colorWithRed:46.0f/255.0f green:48.0f/255.0f blue:63.0f/255.0f alpha:1]
 #define HeaderTitleColor [UIColor colorWithRed:255.0f/255.0f green:255.0f/255.0f blue:255.0f/255.0f alpha:1]

@@ -18,7 +18,7 @@
 
 @property(nonatomic, assign) id<FooterItemViewDelegate> myDelegate;
 
-- (id)init:(NSDictionary *)payload;
+- (id)init:(int)count widthPayload:(NSDictionary *)payload;
 
 - (void)didNormal;
 - (void)didActive;

@@ -7,12 +7,13 @@
 //
 
 #import "BrowerViewController.h"
+#import "MWPhotoBrowser.h"
 #import "BrowerView.h"
 #import "HeaderView.h"
 #import "TabView.h"
 #import "FooterView.h"
 
-@interface BrowerViewController () <HeaderViewDelegate, BrowerViewDelegate, TabViewDelegate, FooterViewDelegate, BrowerViewControllerDelegate, UIScrollViewDelegate> {
+@interface BrowerViewController () <HeaderViewDelegate, BrowerViewDelegate, TabViewDelegate, FooterViewDelegate, BrowerViewControllerDelegate, MWPhotoBrowserDelegate, UIScrollViewDelegate> {
     NSString *pageTypeString;
     HeaderView *headerView;
     TabView *tabView;
@@ -21,6 +22,7 @@
     NSMutableArray *browerViewArray;
     NSMutableArray *browerViewIsLoadArray;
     NSDictionary *initDataDictionary;
+    NSMutableArray *photoArray;
 }
 
 @end
@@ -41,6 +43,8 @@
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+    
+    [[self navigationController].navigationBar setHidden:YES];
     
     if (self.navigationController.childViewControllers.count > 1) {
         [headerView showLeftButton];
@@ -78,6 +82,12 @@
     [[NSNotificationCenter defaultCenter] removeObserver:self
                                                     name:UIKeyboardWillShowNotification
                                                   object:nil];*/
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    
+    [self didAppearAction];
 }
 
 - (id)init:(NSString *)data; {
@@ -225,6 +235,12 @@
     }
 }
 
+- (void)didAppearAction {
+    for (BrowerView *browerView in browerViewArray) {
+        [browerView didAppearAction];
+    }
+}
+
 - (void)didClickHeaderLeftButtonDelegate {
     [self didBack];
 }
@@ -237,16 +253,37 @@
     [headerView initTitle:position withPayload:payload];
 }
 
-- (void)didPushBrowerControllerBrowerViewDelegate:(NSString *)url {
-    NSString *initDataString = [NSString stringWithFormat:@"{\"type\": \"OnePage\", \"data\": {\"url\": \"%@\", \"header\": {\"center\": {\"data\": \"\"} } } }", url];
-    BrowerViewController *browerViewController = [[BrowerViewController alloc] init:initDataString];
+- (void)didPushBrowerControllerBrowerViewDelegate:(NSString *)json {
+    BrowerViewController *browerViewController = [[BrowerViewController alloc] init:json];
     [browerViewController setMyDelegate:self];
     [[self navigationController] pushViewController:browerViewController animated:YES];
 }
 
-- (void)didGoBrowerControllerBrowerViewDelegate:(NSString *)string {
+- (void)didPreviewImageControllerBrowerViewDelegate:(NSArray *)array withPosition:(int)position {
+    photoArray = [[NSMutableArray alloc] init];
+    for (int i = 0; i < [array count]; i++) {
+        [photoArray addObject:[MWPhoto photoWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@", [array objectAtIndex:i]]]]];
+    }
+    
+    MWPhotoBrowser *browser = [[MWPhotoBrowser alloc] initWithDelegate:self];
+    browser.displayActionButton = NO;
+    browser.displayNavArrows = NO;
+    browser.displaySelectionButtons = NO;
+    browser.zoomPhotosToFill = YES;
+    browser.alwaysShowControls = NO;
+    browser.enableGrid = YES;
+    browser.startOnGrid = NO;
+    browser.autoPlayOnAppear = NO;
+    [browser showNextPhotoAnimated:YES];
+    [browser showPreviousPhotoAnimated:YES];
+    [browser setCurrentPhotoIndex:position];
+    [[self navigationController] pushViewController:browser animated:YES];
+    [[self navigationController].navigationBar setHidden:NO];
+}
+
+- (void)didSwitchBrowerControllerBrowerViewDelegate:(NSString *)string {
     if (myDelegate) {
-        [myDelegate didGoBrowerControllerBrowerViewControllerDelegate:string];
+        [myDelegate didSwitchBrowerControllerBrowerViewControllerDelegate:string];
     }
 }
 
@@ -274,9 +311,20 @@
     if (! [[browerViewIsLoadArray objectAtIndex:position] boolValue]) {
         [browerViewIsLoadArray replaceObjectAtIndex:position withObject:[NSNumber numberWithInt:1]];
         
+        NSString *type = [initDataDictionary objectForKey:KeyType];
         NSDictionary *initDataDataDictionary = (NSDictionary *) [initDataDictionary objectForKey:KeyData];
-        NSMutableArray *itemArray = (NSMutableArray *) [initDataDataDictionary objectForKey:KeyFooter];
-        NSDictionary *payloadDictionary = [itemArray objectAtIndex:position];
+        
+        NSDictionary *payloadDictionary;
+        
+        if ([type isEqualToString:ValueMultiFooter]) {
+            NSMutableArray *itemArray = (NSMutableArray *) [initDataDataDictionary objectForKey:KeyFooter];
+            payloadDictionary = [itemArray objectAtIndex:position];
+        } else if ([type isEqualToString:ValueMultiTab]) {
+            NSMutableArray *itemArray = (NSMutableArray *) [initDataDataDictionary objectForKey:KeyTab];
+            payloadDictionary = [itemArray objectAtIndex:position];
+        } else if ([type isEqualToString:ValueOnePage]) {
+            
+        }
         
         [(BrowerView *) [browerViewArray objectAtIndex:position] loadUrl:[payloadDictionary objectForKey:KeyUrl]];
     }
@@ -295,7 +343,10 @@
 }
 
 - (void)didBackAndRefreshBrowerViewControllerDelegate:(int)position {
-    [(BrowerView *) [browerViewArray objectAtIndex:position] didBackAndRefresh];
+    //[(BrowerView *) [browerViewArray objectAtIndex:position] didBackAndRefresh];
+    for (BrowerView *browerView in browerViewArray) {
+        [browerView didBackAndRefresh];
+    }
 }
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
@@ -307,9 +358,19 @@
         } else {
             [headerView checkItem:position];
             
-            [headerView checkItem:position];
+            [footerView checkItem:position];
         }
     }
+}
+
+- (NSUInteger)numberOfPhotosInPhotoBrowser:(MWPhotoBrowser *)photoBrowser {
+    return photoArray.count;
+}
+
+- (id <MWPhoto>)photoBrowser:(MWPhotoBrowser *)photoBrowser photoAtIndex:(NSUInteger)index {
+    if (index < photoArray.count)
+        return [photoArray objectAtIndex:index];
+    return nil;
 }
 
 /*- (void)keyboardWillShow:(NSNotification *)notification {

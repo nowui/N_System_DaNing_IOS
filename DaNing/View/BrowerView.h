@@ -11,8 +11,9 @@
 @protocol BrowerViewDelegate
 
 - (void)didSetTitleBrowerViewDelegate:(int)position withPayload:(NSDictionary *)payload;
-- (void)didPushBrowerControllerBrowerViewDelegate:(NSString *)url;
-- (void)didGoBrowerControllerBrowerViewDelegate:(NSString *)string;
+- (void)didPushBrowerControllerBrowerViewDelegate:(NSString *)json;
+- (void)didPreviewImageControllerBrowerViewDelegate:(NSArray *)array withPosition:(int)position;
+- (void)didSwitchBrowerControllerBrowerViewDelegate:(NSString *)string;
 - (void)didBackBrowerViewDelegate:(int)position;
 - (void)didBackAndRefreshBrowerViewDelegate:(int)position;
 
@@ -27,6 +28,7 @@
 - (void)loadUrl:(NSString *)url;
 - (void)didClickHeaderRightButton;
 - (void)didBackAndRefresh;
+- (void)didAppearAction;
 - (void)didPushAction;
 
 @end

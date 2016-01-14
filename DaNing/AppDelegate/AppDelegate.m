@@ -14,6 +14,7 @@
 
 @interface AppDelegate () <BrowerViewControllerDelegate> {
     NSMutableArray *rootViewControllerArray;
+    NSDictionary *pushDictionary;
 }
 
 @end
@@ -84,13 +85,13 @@
     NSString *initDataString;
     
     UserModel *userModel = [[UserModel alloc] initWithDictionary:[[Helper shared] getAppUser]];
-    /*if([[Helper shared] isNullOrEmpty:userModel.identity]) {
+    if([[Helper shared] isNullOrEmpty:userModel.identity]) {
         initDataString = @"{\"type\": \"OnePage\", \"data\": {\"url\": \"/login.html\", \"header\": {\"center\": {\"data\": \"\"} } } }";
     } else {
         initDataString = @"{\"type\": \"MultiFooter\", \"data\": {\"footer\": [{\"header\": {\"center\": {\"data\": \"上海市闸北区大宁国际学校\"} }, \"text\": \"首页\", \"icon\": \"\\ue88a\", \"url\": \"/index.html\"}, {\"header\": {\"center\": {\"data\": \"应用中心\"} }, \"text\": \"应用\", \"icon\": \"\\ue896\", \"url\": \"/application.html\"}, {\"header\": {\"center\": {\"data\": \"通讯录\"} }, \"text\": \"通讯录\", \"icon\": \"\\ue551\", \"url\": \"/contact.html\"}, {\"header\": {\"center\": {\"data\": \"我\"} }, \"text\": \"我\", \"icon\": \"\\ue7fd\", \"url\": \"/mine.html\"}] } }";
-    }*/
+    }
     
-    initDataString = @"{\"type\": \"MultiTab\", \"data\": {\"header\": {\"center\": {\"data\": \"上海市闸北区大宁国际学校\"} }, \"tab\": [{\"text\": \"校园新闻\", \"icon\": \"\\ue88a\", \"url\": \"/index.html\"}, {\"text\": \"通知公告\", \"icon\": \"\\ue7fd\", \"url\": \"/mine.html\"}] } }";
+    //initDataString = @"{\"type\": \"MultiTab\", \"data\": {\"header\": {\"center\": {\"data\": \"上海市闸北区大宁国际学校\"} }, \"tab\": [{\"text\": \"校园新闻\", \"icon\": \"\\ue88a\", \"url\": \"/index.html\"}, {\"text\": \"通知公告\", \"icon\": \"\\ue7fd\", \"url\": \"/mine.html\"}] } }";
     
     BrowerViewController *browerViewController = [[BrowerViewController alloc] init:initDataString];
     [browerViewController setMyDelegate:self];
@@ -108,7 +109,7 @@
     return YES;
 }
 
-- (void)didGoBrowerControllerBrowerViewControllerDelegate:(NSString *)string {
+- (void)didSwitchBrowerControllerBrowerViewControllerDelegate:(NSString *)string {
     BrowerViewController *browerViewController = [[BrowerViewController alloc] init:string];
     [browerViewController setMyDelegate:self];
     
@@ -177,7 +178,17 @@
     
     [[NSNotificationCenter defaultCenter] postNotificationName:KeyPushFilter object:nil];
     
-    NSString *url = @"";
+    pushDictionary = userInfo;
+    
+    NSString *alert = [[userInfo objectForKey:@"aps"] objectForKey:@"alert"];
+    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"一条新消息,是否查看?"
+                                                        message:[NSString stringWithFormat:@"%@", alert]
+                                                       delegate:self
+                                              cancelButtonTitle:@"取消"
+                                              otherButtonTitles:@"确定", nil];
+    [alertView show];
+    
+    /*NSString *url = @"";
     
     if ([[userInfo objectForKey:KeyType] isEqualToString:@"NOTICE"]) {
         url = [NSString stringWithFormat:@"/notice/detail.html?id=%@", [userInfo objectForKey:KeyId]];
@@ -190,6 +201,25 @@
         BrowerViewController *browerViewController = [[BrowerViewController alloc] init:initDataString];
         [browerViewController setMyDelegate:self];
         [(UINavigationController *)[rootViewControllerArray objectAtIndex:0] pushViewController:browerViewController animated:YES];
+    }*/
+}
+
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+    if (buttonIndex == 1) {
+        NSString *url = @"";
+        
+        if ([[pushDictionary objectForKey:KeyType] isEqualToString:@"NOTICE"]) {
+            url = [NSString stringWithFormat:@"/notice/detail.html?id=%@", [pushDictionary objectForKey:KeyId]];
+        } else if ([[pushDictionary objectForKey:KeyType] isEqualToString:@"MEETING"]) {
+            url = [NSString stringWithFormat:@"/meeting/detail.html?id=%@", [pushDictionary objectForKey:KeyId]];
+        }
+        
+        if (! [[Helper shared] isNullOrEmpty:url]) {
+            NSString *initDataString = [NSString stringWithFormat:@"{\"type\": \"OnePage\", \"data\": {\"url\": \"%@\", \"header\": {\"center\": {\"data\": \"\"} } } }", url];
+            BrowerViewController *browerViewController = [[BrowerViewController alloc] init:initDataString];
+            [browerViewController setMyDelegate:self];
+            [(UINavigationController *)[rootViewControllerArray objectAtIndex:0] pushViewController:browerViewController animated:YES];
+        }
     }
 }
 
