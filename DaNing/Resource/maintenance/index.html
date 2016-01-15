@@ -17,9 +17,9 @@
 <body ng-app="App" ng-controller="Controller">
 	<div tagged-infinite-scroll="load()" tagged-infinite-scroll-disabled="isLoad || !isMore" tagged-infinite-scroll-distance="0">
 	    <ion-list>
-			<ion-item ng-repeat="task in taskList" href="{{task.url}}">
-				<div style="white-space:normal; height:20px; line-height:20px; overflow:hidden; text-overflow:ellipsis; display:-webkit-box; -webkit-line-clamp:1; -webkit-box-orient:vertical;">{{task.createUserName}}{{task.instanceName}}</div>
-				<div style="height:20px line-height:20px; margin-top:5px; opacity:0.5;">{{task.stepName}}<span style="position:absolute; right:15px;">{{task.createTime}}</span></div>
+			<ion-item ng-repeat="maintenance in maintenanceList" ng-click="clickItem(maintenance);">
+				<div style="white-space:normal; height:20px; line-height:20px; overflow:hidden; text-overflow:ellipsis; display:-webkit-box; -webkit-line-clamp:1; -webkit-box-orient:vertical;">{{maintenance.userName}}的采购单</div>
+				<div style="height:20px line-height:20px; margin-top:5px; opacity:0.5;">{{maintenance.stepName}}<span style="position:absolute; right:15px;">{{maintenance.createTime}}</span></div>
 			</ion-item>
 		</ion-list>
 	</div>
@@ -35,19 +35,27 @@ var app = angular.module("App", ["ionic", "ngCookies", "tagged.directives.infini
 		var limit = 10;
 		$scope.isLoad = false;
 		$scope.isMore = false;
-		$scope.taskList = [];
-		$scope.type = getUrlParam("type");
-		var isAudit = false;
-		if($scope.type == "NO") {
-			isAudit = true;
-		}
+		$scope.maintenanceList = [];
 
 		$ionicLoading.show({
             template: LoadingTemplate
         });
 
         if(isApp) {
-			window.location.href = "webviewplus://" + encodeURIComponent("{\"action\":\"" + ActionSetTitle + "\",\"data\":{\"text\":\"通知\"}}");
+			window.location.href = "webviewplus://" + encodeURIComponent("{\"action\":\"" + ActionSetTitle + "\",\"data\":{\"text\":\"我的维修\",\"right\":\"新增\"}}");
+		}
+
+		setClickHeaderRightButton = function(payload) {
+			window.location.href = "/maintenance/detail.html";
+		}
+
+		setBackAndRefresh = function(payload) {
+			page = 1;
+			$scope.isLoad = false;
+			$scope.isMore = false;
+			$scope.maintenanceList = [];
+
+			load();
 		}
 
         getSetting = function(payload) {
@@ -56,23 +64,14 @@ var app = angular.module("App", ["ionic", "ngCookies", "tagged.directives.infini
 			load();
 		}
 
-		setBackAndRefresh = function(payload) {
-			page = 1;
-			$scope.isLoad = false;
-			$scope.isMore = false;
-			$scope.taskList = [];
-
-			load();
-		}
-
-		$scope.clickItem = function(task) {
-			for (var i = 0; i < $scope.taskList.length; i++) {
-				if($scope.taskList[i].id == task.id) {
-					$scope.taskList[i].isRead = false;
+		$scope.clickItem = function(maintenance) {
+			for (var i = 0; i < $scope.maintenanceList.length; i++) {
+				if($scope.maintenanceList[i].id == maintenance.id) {
+					$scope.maintenanceList[i].isRead = false;
 				}
 			}
 
-			window.location.href = "/task/detail.html?id=" + task.id;
+			window.location.href = "/maintenance/detail.html?id=" + maintenance.id;
 		}
 
         load = function() {
@@ -83,13 +82,12 @@ var app = angular.module("App", ["ionic", "ngCookies", "tagged.directives.infini
 
 			$http({
 	            method: "POST",
-	            url: "/task/list",
+	            url: "/maintenance/list",
 	            headers: {
 	                "Content-Type": "application/json;charset=utf-8"
 	            },
 	            data: {
 	            	userId: userId,
-	            	type: $scope.type,
 	                page: page,
 					limit: limit
 	            }
@@ -98,29 +96,8 @@ var app = angular.module("App", ["ionic", "ngCookies", "tagged.directives.infini
 					var list = response.data;
 
 					for (var i = 0; i < list.length; i++) {
-						var task = list[i];
-
-						task.createTime = new Date(task.createTime).Format("yyyy-MM-dd");
-						task.instanceName = "";
-						task.url = "";
-
-						if(task.instanceType == "LEAVE") {
-							task.instanceName = "的请假单";
-							task.url = "/leave/detail.html?id=" + task.objectId + "&isAudit=" + isAudit + "&taskId=" + task.id;
-						} else if(task.instanceType == "PURCHASE") {
-							task.instanceName = "的请购单";
-							task.url = "/purchase/detail.html?id=" + task.objectId + "&isAudit=" + isAudit + "&taskId=" + task.id;
-						} else if(task.instanceType == "MAINTENANCE") {
-							task.instanceName = "的维修单";
-							task.url = "/maintenance/detail.html?id=" + task.objectId + "&isAudit=" + isAudit + "&taskId=" + task.id;
-						}
-
-						if($scope.type == "YES") {
-							task.stepName = task.createTime;
-							task.createTime = "";
-						}
-
-						$scope.taskList.push(task);
+						var maintenance = list[i];
+						$scope.maintenanceList.push(maintenance);
 					}
 
 					if (list.length == limit) {

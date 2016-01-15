@@ -9,11 +9,14 @@ var EventClickHeaderRightButton = "ClickHeaderRightButton";
 var ActionSetTitle = "setTitle";
 var ActionSetSetting = "setSetting";
 var ActionGetSetting = "getSetting";
-var ActionSetGo = "setGo";
+var ActionSetSwitch = "setSwitch";
+var ActionSetNavite = "setNavite";
 var ActionSetBack = "setBack";
 var ActionSetBackAndRefresh = "setBackAndRefresh";
 var ActionSetClickHeaderRightButton = "setClickHeaderRightButton";
 var ActionSetPreviewImage = "setPreviewImage";
+var ActionGetAlert = "getAlert";
+var ActionSetApplicationIconBadgeNumber = "setApplicationIconBadgeNumber";
 
 var CookieAccount = "Account";
 var CookieUserId = "UserId";
@@ -48,12 +51,18 @@ var isNullOrEmpty = function(string) {
 	}
 }
 
+var isNumber = function(s) {
+    if (s!=null && s!="") {
+        return !isNaN(s);
+    }
+    return false;
+}
+
 String.prototype.replaceAll = function(s1, s2) {
     return this.replace(new RegExp(s1, "gm"), s2);
 }
 
-Date.prototype.Format = function(fmt)
-{ //author: meizz
+Date.prototype.Format = function(fmt) {
   var o = {
     "M+" : this.getMonth()+1,                 //月份
     "d+" : this.getDate(),                    //日

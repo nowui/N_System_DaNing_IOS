@@ -55,7 +55,7 @@
 		<ion-item>
 			<div class="row">
 				<div class="col">
-					<button class="button button-positive" style="width:50px; height:50px; border-radius:25px; display: block; margin-left: auto; margin-right: auto; background-color: #75c3d6;">
+					<button class="button button-positive" style="width:50px; height:50px; border-radius:25px; display: block; margin-left: auto; margin-right: auto; background-color: #75c3d6;" ng-click="clickTask();">
 						<span style="min-width:20px; height:20px; line-height:20px; font-size: 14px;position:absolute; right:-5px; top:-5px; border-radius:10px; background-color: red;" ng-show="taskCount > 0">{{taskCount}}</span>
 				      	<i class="icon material-icons" style="height:50px; line-height:50px; text-align:center;">&#xe614;</i>
 				    </button>
@@ -108,15 +108,20 @@
 					</div>
 				</div>
 				<div class="col">
-					<button class="button button-positive" style="width:50px; height:50px; border-radius:25px; display: block; margin-left: auto; margin-right: auto; background-color: #75c3d6;">
+					<button class="button button-positive" style="width:50px; height:50px; border-radius:25px; display: block; margin-left: auto; margin-right: auto; background-color: #75c3d6;" ng-click="clickPurchase();">
 				      <i class="icon material-icons" style="height:50px; line-height:50px; text-align:center;">&#xe8df;</i>
 				    </button>
 				    <div style="text-align:center; margin-top:10px;">
-						后勤
+						采购
 					</div>
 				</div>
 				<div class="col">
-
+					<button class="button button-positive" style="width:50px; height:50px; border-radius:25px; display: block; margin-left: auto; margin-right: auto; background-color: #92cab1;" ng-click="clickMaintenance();">
+				      <i class="icon material-icons" style="height:50px; line-height:50px; text-align:center;">&#xe8d1;</i>
+				    </button>
+				    <div style="text-align:center; margin-top:10px;">
+						维修
+					</div>
 				</div>
 			</div>
 		</ion-item>
@@ -205,8 +210,22 @@ var app = angular.module("App", ["ionic", "ngCookies"])
 					$scope.taskCount = response.data.taskCount;
 					$scope.noticeCount = response.data.noticeCount;
 					$scope.meetingCount = response.data.meetingCount;
+
+					$timeout(function() {
+						window.location.href = "webviewplus://" + encodeURIComponent("{\"action\":\"" + ActionSetApplicationIconBadgeNumber + "\",\"data\":{\"number\": " + (Number($scope.taskCount) + Number($scope.noticeCount) + Number($scope.meetingCount)) + "}}");
+				    }, 1);
 				}
 			});
+		}
+
+		$scope.clickTask = function() {
+			var data = {
+                data: "{\"type\": \"MultiTab\", \"data\": {\"header\": {\"center\": {\"data\": \"我的待办\"} }, \"tab\": [{\"text\": \"未审核\", \"url\": \"/task/index.html?type=NO\"}, {\"text\": \"已审核\", \"url\": \"/task/index.html?type=YES\"}] } }"
+            };
+
+            $timeout(function() {
+                window.location.href = "webviewplus://" + encodeURIComponent("{\"action\":\"" + ActionSetNavite + "\",\"data\":" + JSON.stringify(data) + "}");
+            }, 1);
 		}
 
 		$scope.clickPortalBasic = function() {
@@ -231,6 +250,14 @@ var app = angular.module("App", ["ionic", "ngCookies"])
 
 		$scope.clickLeave = function() {
 			window.location.href = "/leave/index.html";
+		}
+
+		$scope.clickPurchase = function() {
+			window.location.href = "/purchase/index.html";
+		}
+
+		$scope.clickMaintenance = function() {
+			window.location.href = "/maintenance/index.html";
 		}
 
 		if(isApp) {

@@ -67,6 +67,8 @@
 		75E1F1B71BE6535C00A2CCC6 /* BaseModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 75E1F1B61BE6535C00A2CCC6 /* BaseModel.m */; };
 		75E1F1BA1BE6543300A2CCC6 /* NSDictionary+Json.m in Sources */ = {isa = PBXBuildFile; fileRef = 75E1F1B91BE6543300A2CCC6 /* NSDictionary+Json.m */; };
 		75E1F1BC1BE65EC400A2CCC6 /* mine.html in Resources */ = {isa = PBXBuildFile; fileRef = 75E1F1BB1BE65EC400A2CCC6 /* mine.html */; };
+		75E65F1B1C48CD6C0033D86E /* maintenance in Resources */ = {isa = PBXBuildFile; fileRef = 75E65F191C48CD6C0033D86E /* maintenance */; };
+		75E65F1C1C48CD6C0033D86E /* purchase in Resources */ = {isa = PBXBuildFile; fileRef = 75E65F1A1C48CD6C0033D86E /* purchase */; };
 		EFFF5B38D7BD0A99B083AE38 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8B42EB9805F4B8E7A7E442E6 /* libPods.a */; };
 /* End PBXBuildFile section */
 
@@ -171,6 +173,8 @@
 		75E1F1B81BE6543300A2CCC6 /* NSDictionary+Json.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDictionary+Json.h"; sourceTree = "<group>"; };
 		75E1F1B91BE6543300A2CCC6 /* NSDictionary+Json.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDictionary+Json.m"; sourceTree = "<group>"; };
 		75E1F1BB1BE65EC400A2CCC6 /* mine.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = mine.html; sourceTree = "<group>"; };
+		75E65F191C48CD6C0033D86E /* maintenance */ = {isa = PBXFileReference; lastKnownFileType = folder; path = maintenance; sourceTree = "<group>"; };
+		75E65F1A1C48CD6C0033D86E /* purchase */ = {isa = PBXFileReference; lastKnownFileType = folder; path = purchase; sourceTree = "<group>"; };
 		8B42EB9805F4B8E7A7E442E6 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		E108CD644B5AC6FDFE2535C3 /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -283,6 +287,8 @@
 		7592E2711BDE16B5000B0EFF /* Resource */ = {
 			isa = PBXGroup;
 			children = (
+				75E65F191C48CD6C0033D86E /* maintenance */,
+				75E65F1A1C48CD6C0033D86E /* purchase */,
 				75CBB1FA1BF3EC250027139B /* user */,
 				75E1F1BB1BE65EC400A2CCC6 /* mine.html */,
 				75910A631BE51627002C248C /* application.html */,
@@ -551,6 +557,7 @@
 				7592E2851BDE16F0000B0EFF /* Default-667h@2x.png in Resources */,
 				7592E28B1BDE16F0000B0EFF /* Icon-58.png in Resources */,
 				75910A911BE51627002C248C /* task in Resources */,
+				75E65F1B1C48CD6C0033D86E /* maintenance in Resources */,
 				7592E2901BDE16F0000B0EFF /* Icon-180.png in Resources */,
 				75CBB1FB1BF3EC250027139B /* user in Resources */,
 				7592E28C1BDE16F0000B0EFF /* Icon-80.png in Resources */,
@@ -564,6 +571,7 @@
 				75910A871BE51627002C248C /* enroll in Resources */,
 				75910A8B1BE51627002C248C /* logistics in Resources */,
 				7592E2861BDE16F0000B0EFF /* Default-736h@3x.png in Resources */,
+				75E65F1C1C48CD6C0033D86E /* purchase in Resources */,
 				75983A001BDED58B00BAA633 /* MaterialIcons-Regular.ttf in Resources */,
 				75910A7E1BE51627002C248C /* index.html in Resources */,
 				75910A921BE51627002C248C /* video in Resources */,
@@ -769,7 +777,7 @@
 			baseConfigurationReference = E108CD644B5AC6FDFE2535C3 /* Pods.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: Yongqiang Zhong (7A5K69VZRP)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Yongqiang Zhong (558728E6N5)";
 				INFOPLIST_FILE = DaNing/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
@@ -786,7 +794,7 @@
 			baseConfigurationReference = 37F826547CF0A0442234AB89 /* Pods.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: Yongqiang Zhong (7A5K69VZRP)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Yongqiang Zhong (558728E6N5)";
 				INFOPLIST_FILE = DaNing/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;

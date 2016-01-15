@@ -18,7 +18,7 @@
 	<div tagged-infinite-scroll="load()" tagged-infinite-scroll-disabled="isLoad || !isMore" tagged-infinite-scroll-distance="0">
 	    <ion-list>
 			<ion-item ng-repeat="leave in leaveList" ng-click="clickItem(leave);">
-				<div style="white-space:normal; height:20px; line-height:20px; overflow:hidden; text-overflow:ellipsis; display:-webkit-box; -webkit-line-clamp:1; -webkit-box-orient:vertical;">{{leave.userName}}的请假</div>
+				<div style="white-space:normal; height:20px; line-height:20px; overflow:hidden; text-overflow:ellipsis; display:-webkit-box; -webkit-line-clamp:1; -webkit-box-orient:vertical;">{{leave.userName}}的请假单</div>
 				<div style="height:20px line-height:20px; margin-top:5px; opacity:0.5;">{{leave.stepName}}<span style="position:absolute; right:15px;">{{leave.createTime}}</span></div>
 			</ion-item>
 		</ion-list>
@@ -46,7 +46,7 @@ var app = angular.module("App", ["ionic", "ngCookies", "tagged.directives.infini
 		}
 
 		setClickHeaderRightButton = function(payload) {
-			window.location.href = "/leave/detail.html"
+			window.location.href = "/leave/detail.html";
 		}
 
 		setBackAndRefresh = function(payload) {

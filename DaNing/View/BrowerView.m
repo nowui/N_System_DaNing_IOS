@@ -202,6 +202,9 @@
             UITextField *textField = [alert textFieldAtIndex:0];
             [textField setPlaceholder:[payloadDictionary objectForKey:KeyPlaceholder]];
             [alert show];
+        } else if ([actionString isEqualToString:ActionSetApplicationIconBadgeNumber]) {
+            
+            [myDelegate didSetApplicationIconBadgeNumberBrowerViewDelegate:[[payloadDictionary objectForKey:KeyNumber] intValue]];
         }
         
         return NO;

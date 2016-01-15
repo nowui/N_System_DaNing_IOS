@@ -299,6 +299,12 @@
     [self didBack];
 }
 
+- (void)didSetApplicationIconBadgeNumberBrowerViewDelegate:(int)number {
+    if (myDelegate) {
+        [myDelegate didSetApplicationIconBadgeNumberBrowerViewControllerDelegate:number];
+    }
+}
+
 - (void)didClickTabViewDelegate:(int)position {
     [self didClick:position];
 }

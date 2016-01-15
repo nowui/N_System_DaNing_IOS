@@ -117,7 +117,7 @@ var app = angular.module("App", ["ionic", "ngCookies"])
                         };
 
                         $timeout(function() {
-                            window.location.href = "webviewplus://" + encodeURIComponent("{\"action\":\"" + ActionSetGo + "\",\"data\":" + JSON.stringify(data) + "}");
+                            window.location.href = "webviewplus://" + encodeURIComponent("{\"action\":\"" + ActionSetSwitch + "\",\"data\":" + JSON.stringify(data) + "}");
                         }, 1);
                     } else {
                         window.location.href = "/index.html";

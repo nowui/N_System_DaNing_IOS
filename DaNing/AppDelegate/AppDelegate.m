@@ -78,7 +78,7 @@
         }
     }*/
     
-    //[NSURLProtocol registerClass:[BaseURLProtocol class]];
+    [NSURLProtocol registerClass:[BaseURLProtocol class]];
     
     [[UIApplication sharedApplication] setStatusBarStyle:StatusBarStyleDefault];
     
@@ -134,6 +134,14 @@
 
 - (void)didBackAndRefreshBrowerViewControllerDelegate:(int)position {
     
+}
+
+- (void)didSetApplicationIconBadgeNumberBrowerViewControllerDelegate:(int)number {
+    [[UIApplication sharedApplication] setApplicationIconBadgeNumber:number];
+    
+    if (number == 0) {
+        [[UIApplication sharedApplication] cancelAllLocalNotifications];
+    }
 }
 
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
@@ -207,15 +215,24 @@
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
     if (buttonIndex == 1) {
         NSString *url = @"";
+        NSString *initDataString = @"";
         
         if ([[pushDictionary objectForKey:KeyType] isEqualToString:@"NOTICE"]) {
             url = [NSString stringWithFormat:@"/notice/detail.html?id=%@", [pushDictionary objectForKey:KeyId]];
+            initDataString = [NSString stringWithFormat:@"{\"type\": \"OnePage\", \"data\": {\"url\": \"%@\", \"header\": {\"center\": {\"data\": \"\"} } } }", url];
+            
         } else if ([[pushDictionary objectForKey:KeyType] isEqualToString:@"MEETING"]) {
             url = [NSString stringWithFormat:@"/meeting/detail.html?id=%@", [pushDictionary objectForKey:KeyId]];
+            initDataString = [NSString stringWithFormat:@"{\"type\": \"OnePage\", \"data\": {\"url\": \"%@\", \"header\": {\"center\": {\"data\": \"\"} } } }", url];
+            
+        } else if ([[pushDictionary objectForKey:KeyType] isEqualToString:@"TASK"]) {
+            url = [NSString stringWithFormat:@"/task/detail.html?id=%@", [pushDictionary objectForKey:KeyId]];
+            
+            initDataString = @"{\"type\": \"MultiTab\", \"data\": {\"header\": {\"center\": {\"data\": \"我的待办\"} }, \"tab\": [{\"text\": \"未审核\", \"url\": \"/task/index.html?type=NO\"}, {\"text\": \"已审核\", \"url\": \"/task/index.html?type=YES\"}] } }";
+            
         }
         
         if (! [[Helper shared] isNullOrEmpty:url]) {
-            NSString *initDataString = [NSString stringWithFormat:@"{\"type\": \"OnePage\", \"data\": {\"url\": \"%@\", \"header\": {\"center\": {\"data\": \"\"} } } }", url];
             BrowerViewController *browerViewController = [[BrowerViewController alloc] init:initDataString];
             [browerViewController setMyDelegate:self];
             [(UINavigationController *)[rootViewControllerArray objectAtIndex:0] pushViewController:browerViewController animated:YES];
@@ -236,14 +253,14 @@
     // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
     // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
     
-    [[UIApplication sharedApplication] setApplicationIconBadgeNumber:0];
+    //[[UIApplication sharedApplication] setApplicationIconBadgeNumber:0];
 }
 
 - (void)applicationWillEnterForeground:(UIApplication *)application {
     // Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
     
-    [application setApplicationIconBadgeNumber:0];
-    [application cancelAllLocalNotifications];
+    //[application setApplicationIconBadgeNumber:0];
+    //[application cancelAllLocalNotifications];
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application {

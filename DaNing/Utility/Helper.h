@@ -8,9 +8,9 @@
 
 #import <Foundation/Foundation.h>
 
-//#define WebUrl @"http://run.nowui.com"
+#define WebUrl @"http://run.nowui.com"
 //#define WebUrl @"http://localhost:8888"
-#define WebUrl @"http://192.168.48.187:8888"
+//#define WebUrl @"http://192.168.1.219:8888"
 
 
 #define HeaderHttp @"http"
@@ -40,6 +40,7 @@
 #define KeyInitData  @"initData"
 #define KeyType  @"type"
 #define KeyData  @"data"
+#define KeyNumber  @"number"
 #define KeyTitle  @"title"
 #define KeyPlaceholder  @"placeholder"
 #define KeyIcon  @"icon"
@@ -77,6 +78,7 @@
 #define ActionGetPush @"getPush"
 #define ActionGetAppear @"getAppear"
 #define ActionGetAlert @"getAlert"
+#define ActionSetApplicationIconBadgeNumber @"setApplicationIconBadgeNumber"
 
 #define ValueOnePage @"OnePage"
 #define ValueMultiTab @"MultiTab"

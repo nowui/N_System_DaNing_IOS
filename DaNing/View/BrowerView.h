@@ -16,6 +16,7 @@
 - (void)didSwitchBrowerControllerBrowerViewDelegate:(NSString *)string;
 - (void)didBackBrowerViewDelegate:(int)position;
 - (void)didBackAndRefreshBrowerViewDelegate:(int)position;
+- (void)didSetApplicationIconBadgeNumberBrowerViewDelegate:(int)number;
 
 @end
 

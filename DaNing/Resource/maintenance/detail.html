@@ -20,33 +20,17 @@
 <body ng-app="App" ng-controller="Controller">
 	<ion-list>
 		<ion-item ng-class="{'item-icon-right': isSubmit}" ng-click="clickType();">
-			请假类型
+			维修班级
 			<div style="display:none;">
-				<select id="type" ng-model="leave.type" ng-options="item as item.text for item in types "></select>
+				<select id="class" ng-model="maintenance.class" ng-options="item as item.text for item in classs "></select>
 			</div>
-			<span class="item-note" style="color:#444;">{{leave.type.text}}</span>
+			<span class="item-note" style="color:#444;">{{maintenance.class.text}}</span>
 			<i class="icon material-icons item-note" ng-show="isSubmit">&#xe5cc;</i>
-		</ion-item>
-		<ion-item ng-class="{'item-icon-right': isSubmit}" ng-click="clickStart();" style="margin-top:10px;">
-			开始日期<input id="start" style="display:none;" ng-model="leave.startTime" />
-			<span class="item-note" style="color:#444;">{{leave.startTime}}</span>
-			<i class="icon material-icons item-note" ng-show="isSubmit">&#xe5cc;</i>
-		</ion-item>
-		<ion-item ng-class="{'item-icon-right': isSubmit}" ng-click="clickEnd();">
-			结束日期<input id="end" style="display:none;" ng-model="leave.endTime" />
-			<span class="item-note" style="color:#444;">{{leave.endTime}}</span>
-			<i class="icon material-icons item-note" ng-show="isSubmit">&#xe5cc;</i>
-		</ion-item>
-		<ion-item style="margin-top:10px;" class="item-input">
-			请假天数
-			<div style="padding-left:10px;">
-				<input type="number" style="width:100%; font-size:14px; background-color:transparent;" ng-model="leave.day" ng-pattern="/^[0-9]+$/" ng-readonly="{{!isSubmit}}"></input>
-			</div>
 		</ion-item>
 		<ion-item style="margin-top:10px;">
-			<div style="position:absolute;">请假理由</div>
+			<div style="position:absolute;">维修事项</div>
 			<div style="padding-left:80px;">
-				<textarea rows="5" style="width:100%; font-size:14px; background-color:transparent;" ng-model="leave.content" ng-readonly="{{!isSubmit}}"></textarea>
+				<textarea rows="5" style="width:100%; font-size:14px; background-color:transparent;" ng-model="maintenance.content"></textarea>
 			</div>
 		</ion-item>
 	</ion-list>
@@ -85,8 +69,8 @@ var app = angular.module("App", ["ionic", "ngCookies", "tagged.directives.infini
     	var userId = $cookieStore.get(CookieUserId);
     	var id = "";
 		var action = "save";
-    	$scope.leave = {};
-    	$scope.leave.type = {
+    	$scope.maintenance = {};
+    	$scope.maintenance.class = {
     		value: "",
     		text: ""
     	};
@@ -116,38 +100,20 @@ var app = angular.module("App", ["ionic", "ngCookies", "tagged.directives.infini
 		}
 
         if(isApp) {
-			window.location.href = "webviewplus://" + encodeURIComponent("{\"action\":\"" + ActionSetTitle + "\",\"data\":{\"text\":\"我的请假\"}}");
+			window.location.href = "webviewplus://" + encodeURIComponent("{\"action\":\"" + ActionSetTitle + "\",\"data\":{\"text\":\"我的维修\"}}");
 
 			$timeout(function() {
 				window.location.href = "webviewplus://" + encodeURIComponent("{\"action\":\"" + ActionGetSetting + "\",\"data\":{}}");
 		    }, 1);
 		}
 
-    	$scope.types = [{
-    		value: "SJ",
-    		text: "事假"
-    	}, {
-    		value: "BJ",
-    		text: "病假"
-    	}, {
-    		value: "NJ",
-    		text: "年假"
-    	}, {
-    		value: "TX",
-    		text: "调休"
-    	}, {
-    		value: "HJ",
-    		text: "婚假"
-    	}, {
-    		value: "CJ",
-    		text: "产假"
-    	}]
+    	$scope.classs = []
 
 		init = function() {
 			$scope.isSubmit = true;
 
 			$timeout(function() {
-				$('#type').mobiscroll().select({
+				$('#class').mobiscroll().select({
 			        theme: 'ios',
 			        lang: 'zh',
 			        display: 'bottom'
@@ -171,7 +137,7 @@ var app = angular.module("App", ["ionic", "ngCookies", "tagged.directives.infini
 			});
 
 			$scope.clickType = function() {
-				$('#type').mobiscroll('show');
+				$('#class').mobiscroll('show');
 			}
 
 			$scope.clickStart = function() {
@@ -186,7 +152,7 @@ var app = angular.module("App", ["ionic", "ngCookies", "tagged.directives.infini
 		load = function() {
 			$http({
 	            method: "POST",
-	            url: "/leave/find",
+	            url: "/maintenance/find",
 	            headers: {
 	                "Content-Type": "application/json;charset=utf-8"
 	            },
@@ -195,18 +161,14 @@ var app = angular.module("App", ["ionic", "ngCookies", "tagged.directives.infini
 	            }
 	        }).success(function(response) {
 	            if (response.result) {
-	            	for(var i = 0; i < $scope.types.length; i++) {
-						if(response.data.type == $scope.types[i].value) {
-							$scope.leave.type = $scope.types[i];
+	            	for(var i = 0; i < $scope.classs.length; i++) {
+						if(response.data.classId == $scope.classs[i].value) {
+							$scope.maintenance.class = $scope.classs[i];
 							break;
 						}
 	            	}
 
-					$scope.leave.type.value = response.data.type;
-					$scope.leave.startTime = response.data.startTime.substring(0, 10);
-					$scope.leave.endTime = response.data.endTime.substring(0, 10);
-					$scope.leave.day = Number(response.data.day);
-					$scope.leave.content = decodeURIComponent(response.data.content);
+					$scope.maintenance.content = decodeURIComponent(response.data.content);
 
 					if(response.data.instanceState == "START") {
 						if(! $scope.isAudit && response.data.userId == userId) {
@@ -246,24 +208,12 @@ var app = angular.module("App", ["ionic", "ngCookies", "tagged.directives.infini
 		$scope.saveOrUpdate = function(isAudit) {
 			var message = "";
 
-			if(isNullOrEmpty($scope.leave.type.value)) {
-				message += "请选择请假类型!<br/>";
+			if(isNullOrEmpty($scope.maintenance.class.value)) {
+				message += "请选择维修班级!<br/>";
 			}
 
-			if(isNullOrEmpty($scope.leave.startTime)) {
-				message += "请选择开始日期!<br/>";
-			}
-
-			if(isNullOrEmpty($scope.leave.endTime)) {
-				message += "请选择结束日期!<br/>";
-			}
-
-			if(isNullOrEmpty($scope.leave.day)) {
-				message += "请填写请假天数!<br/>";
-			}
-
-			if(isNullOrEmpty($scope.leave.content)) {
-				message += "请填写请假理由!<br/>";
+			if(isNullOrEmpty($scope.maintenance.content)) {
+				message += "请填写维修事项!<br/>";
 			}
 
 			if(! isNullOrEmpty(message)) {
@@ -281,18 +231,15 @@ var app = angular.module("App", ["ionic", "ngCookies", "tagged.directives.infini
 
 			$http({
 				method: "POST",
-				url: "/leave/" + action,
+				url: "/maintenance/" + action,
 				headers: {
 					"Content-Type": "application/json;charset=utf-8"
 				},
 				data: {
 	            	userId: userId,
 					id: id,
-					type: $scope.leave.type.value,
-					startTime: new Date($scope.leave.startTime).Format("yyyy-MM-dd") + " 00:00:00",
-					endTime: new Date($scope.leave.endTime).Format("yyyy-MM-dd") + " 00:00:00",
-					day: $scope.leave.day,
-					content: encodeURIComponent($scope.leave.content),
+					classId: $scope.maintenance.class.value,
+					content: encodeURIComponent($scope.maintenance.content),
 					isAudit: isAudit
 				}
 			}).success(function(response) {
@@ -356,17 +303,45 @@ var app = angular.module("App", ["ionic", "ngCookies", "tagged.directives.infini
 			});
 		}
 
-		if(isNullOrEmpty(getUrlParam("id"))) {
-			init();
+        loadClass = function(instanceId) {
+			$http({
+	            method: "POST",
+	            url: "/class/list",
+	            headers: {
+	                "Content-Type": "application/json;charset=utf-8"
+	            },
+	            data: {
 
-			$ionicLoading.hide();
-		} else {
-			id = getUrlParam("id");
+	            }
+	        }).success(function(response) {
+	            if (response.result) {
+					var classList = response.data;
 
-			action = "update";
+					for(var i = 0; i < classList.length; i++) {
+						var c = classList[i];
 
-			load();
-		}
+						$scope.classs.push({
+							value: c.id,
+							text: c.name
+						});
+					}
+
+					if(isNullOrEmpty(getUrlParam("id"))) {
+						init();
+
+						$ionicLoading.hide();
+					} else {
+						id = getUrlParam("id");
+
+						action = "update";
+
+						load();
+					}
+				}
+	        });
+        };
+
+		loadClass();
 	});
 })();
 </script>
