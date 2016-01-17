@@ -45,7 +45,7 @@
         
         leftButton = [UIButton buttonWithType:UIButtonTypeCustom];
         [leftButton setAlpha:0.0];
-        [leftButton setFrame:CGRectMake(5, 0, width, width)];
+        [leftButton setFrame:CGRectMake(0, 0, width, width)];
         [leftButton addTarget:self action:@selector(clickLeftButton:) forControlEvents:UIControlEventTouchUpInside];
         [leftButton setTitle:@"\ue5cb" forState:UIControlStateNormal];
         [leftButton.titleLabel setFont:[UIFont fontWithName:HeaderIconFontName size:HeaderIconFontSize]];
@@ -56,7 +56,7 @@
         [rightButton setFrame:CGRectMake(ScreenWidth - width - 5, 0, width, width)];
         [rightButton addTarget:self action:@selector(clickRightButton:) forControlEvents:UIControlEventTouchUpInside];
         [rightButton setTitle:@"" forState:UIControlStateNormal];
-        [rightButton.titleLabel setFont:[UIFont systemFontOfSize:17]];
+        [rightButton.titleLabel setFont:[UIFont systemFontOfSize:18]];
         [self addSubview:rightButton];
         
     }

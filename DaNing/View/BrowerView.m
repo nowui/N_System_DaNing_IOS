@@ -192,7 +192,7 @@
             }
         } else if ([actionString isEqualToString:ActionSetPreviewImage]) {
             
-            [myDelegate didPreviewImageControllerBrowerViewDelegate:[jsonDictionary objectForKey:KeyData] withPosition:[[jsonDictionary objectForKey:KeyPosition] intValue]];
+            [myDelegate didPreviewImageControllerBrowerViewDelegate:[[jsonDictionary objectForKey:KeyData] objectForKey:KeyList] withPosition:[[[jsonDictionary objectForKey:KeyData] objectForKey:KeyPosition] intValue]];
         } else if ([actionString isEqualToString:ActionSetNavite]) {
             
             [myDelegate didPushBrowerControllerBrowerViewDelegate:[NSString stringWithFormat:@"%@", [payloadDictionary objectForKey:KeyData]]];

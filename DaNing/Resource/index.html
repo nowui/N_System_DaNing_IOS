@@ -80,11 +80,13 @@ var app = angular.module("App", ["ionic", "ngCookies", "tagged.directives.infini
 
 					for (var i = 0; i < list.length; i++) {
 						var article = list[i];
-						article.picture = imageUrl + article.picture;
-						$scope.articleList.push(article);
 
-						if(i < 5) {
+						if(i < 2) {
+							article.picture = imageUrl + article.picture;
 							$scope.bannerList.push(article);
+						} else {
+							article.picture = imageUrl + article.picture.replace("/upload/images/", "/upload/_thumbs/Images/");
+							$scope.articleList.push(article);
 						}
 					}
 

@@ -78,7 +78,7 @@
         }
     }*/
     
-    [NSURLProtocol registerClass:[BaseURLProtocol class]];
+    //[NSURLProtocol registerClass:[BaseURLProtocol class]];
     
     [[UIApplication sharedApplication] setStatusBarStyle:StatusBarStyleDefault];
     
