@@ -181,12 +181,13 @@
 
 - (void)initMainView:(NSMutableArray *)itemArray {
     int y = headerView.frame.origin.y + headerView.frame.size.height;
+    int height = screenHeight - StatusHeight - NavigationHeight;
     
     if(tabView) {
         y += tabView.frame.size.height;
     }
     
-    mainScrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, y, screenWidth, screenHeight - StatusHeight - NavigationHeight)];
+    mainScrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, y, screenWidth, height)];
     [mainScrollView setDelegate:self];
     [mainScrollView setContentSize:CGSizeMake(screenWidth * [itemArray count], screenHeight - StatusHeight - NavigationHeight)];
     [mainScrollView setShowsHorizontalScrollIndicator:NO];

@@ -78,7 +78,10 @@
         }
     }*/
     
-    //[NSURLProtocol registerClass:[BaseURLProtocol class]];
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+    NSLog(@"%@", paths);
+    
+    [NSURLProtocol registerClass:[BaseURLProtocol class]];
     
     [[UIApplication sharedApplication] setStatusBarStyle:StatusBarStyleDefault];
     

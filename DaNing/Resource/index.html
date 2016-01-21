@@ -81,7 +81,7 @@ var app = angular.module("App", ["ionic", "ngCookies", "tagged.directives.infini
 					for (var i = 0; i < list.length; i++) {
 						var article = list[i];
 
-						if(i < 2) {
+						if(i < 2 && page == 1) {
 							article.picture = imageUrl + article.picture;
 							$scope.bannerList.push(article);
 						} else {

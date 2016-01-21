@@ -53,15 +53,15 @@ var app = angular.module("App", ["ionic", "ngCookies"])
 					$timeout(function() {
 						var imgs = document.getElementsByTagName('img');
 						var length = imgs.length;
-						var data = [];
+						var list = [];
 						for (var i = 0; i < length; i++) {
-							data.push(imgs[i].src);
+							list.push(imgs[i].src);
 						}
 						for (var i = 0; i < length; i++) {
 						    img = imgs[i];
 						    img.position = i;
 						    img.onclick = function() {
-								window.location.href = "webviewplus://" + encodeURIComponent("{\"action\":\"" + ActionSetPreviewImage + "\",\"position\":\"" + this.position + "\",\"data\":" + JSON.stringify(data) + "}");
+								window.location.href = "webviewplus://" + encodeURIComponent("{\"action\":\"" + ActionSetPreviewImage + "\",\"data\":{\"position\":\"" + this.position + "\",\"list\":" + JSON.stringify(list) + "}}");
 						    }
 						}
 	                });
