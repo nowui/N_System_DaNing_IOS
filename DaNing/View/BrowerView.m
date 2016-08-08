@@ -10,11 +10,13 @@
 #import "Helper.h"
 #import "UserModel.h"
 #import "SVPullToRefresh.h"
+#import "JSBridge.h"
 
 @interface BrowerView () <UIWebViewDelegate> {
     UIWebView *mainWebView;
     NSString *urlString;
     BOOL isLoad;
+    JSBridge *bridge;
 }
 
 @end
@@ -67,8 +69,77 @@
         [mainWebView.scrollView.pullToRefreshView setTitle:@"释放刷新" forState:SVPullToRefreshStateTriggered];
         [mainWebView.scrollView.pullToRefreshView setTitle:@"正在加载.." forState:SVPullToRefreshStateLoading];
         [mainWebView.scrollView.pullToRefreshView setSubtitle:[NSString stringWithFormat:@"%@:%@", @"最后更新", [[Helper shared] getCurrentTime]] forState:UIControlStateNormal];
+        
+        
+        
+        bridge = [[JSBridge alloc]initWithWebView:mainWebView webViewDelegate:self bundle:nil handler:^(id data, JSBResponseCallback responseCallback) {
+            JSBLog(@"ObjC received message from JS after initialization: %@", data);
+            [JSBridge callEventCallback:responseCallback data:@"Response for message from ObjC"];
+        }];
+        
+        [self initjsBridge];
     }
     return self;
+}
+
+- (void)initjsBridge {
+    [bridge registerEvent:ActionSetTitle handler:^(id data, JSBResponseCallback responseCallback) {
+        NSLog(@"%@: %@", ActionSetTitle, data);
+        
+        NSDictionary *payloadDictionary = [data objectForKey:KeyData];
+        
+        if (myDelegate) {
+            [myDelegate didSetTitleBrowerViewDelegate:(int) self.tag withPayload:payloadDictionary];
+        }
+        
+        [JSBridge callEventCallback:responseCallback data:@""];
+    }];
+    
+    [bridge registerEvent:ActionGetSetting handler:^(id data, JSBResponseCallback responseCallback) {
+        NSLog(@"%@: %@", ActionGetSetting, data);
+        
+        //NSDictionary *payloadDictionary = [data objectForKey:KeyData];
+        
+        [JSBridge callEventCallback:responseCallback data:[self getUserJson]];
+    }];
+    
+    [bridge registerEvent:ActionSetSetting handler:^(id data, JSBResponseCallback responseCallback) {
+        NSLog(@"%@: %@", ActionSetSetting, data);
+        
+        NSDictionary *payloadDictionary = [data objectForKey:KeyData];
+        
+        UserModel *userModel = [[UserModel alloc] initWithDictionary:[[Helper shared] getAppUser]];
+        userModel.identity = [payloadDictionary objectForKey:KeyAppUserId];
+        userModel.name = [payloadDictionary objectForKey:KeyAppUserName];
+        [[Helper shared] setAppUser:[userModel packageDictionary]];
+        
+        [JSBridge callEventCallback:responseCallback data:@""];
+    }];
+    
+    [bridge registerEvent:ActionSetSwitch handler:^(id data, JSBResponseCallback responseCallback) {
+        NSLog(@"%@: %@", ActionSetSwitch, data);
+        
+        NSDictionary *payloadDictionary = [data objectForKey:KeyData];
+        
+        if (myDelegate) {
+            NSData *jsonData = [NSJSONSerialization dataWithJSONObject:[payloadDictionary objectForKey:KeyData] options:NSJSONWritingPrettyPrinted error:nil];
+            NSString *jsonstring = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+            
+            [myDelegate didSwitchBrowerControllerBrowerViewDelegate:jsonstring];
+        }
+        
+        [JSBridge callEventCallback:responseCallback data:@""];
+    }];
+    
+    [bridge registerEvent:ActionSetPreviewImage handler:^(id data, JSBResponseCallback responseCallback) {
+        NSLog(@"%@: %@", ActionSetPreviewImage, data);
+        
+        NSDictionary *payloadDictionary = [data objectForKey:KeyData];
+        
+        [myDelegate didPreviewImageControllerBrowerViewDelegate:[payloadDictionary objectForKey:KeyList] withPosition:[[payloadDictionary objectForKey:KeyPosition] intValue]];
+        
+        [JSBridge callEventCallback:responseCallback data:@""];
+    }];
 }
 
 - (void)finishRefresh {
@@ -95,35 +166,51 @@
     NSRange range = [url rangeOfString:HeaderHttp];
     
     if (range.length > 0) {
-        request =[NSURLRequest requestWithURL:[NSURL URLWithString:url]];
+        request = [NSURLRequest requestWithURL:[NSURL URLWithString:url]];
     } else {
-        request =[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", WebUrl, url]]];
+        request = [NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", WebUrl, url]]];
     }
     
     [mainWebView loadRequest:request];
 }
 
 - (void)didClickHeaderRightButton {
-    [mainWebView stringByEvaluatingJavaScriptFromString:[NSString stringWithFormat:@"%@({})", ActionSetClickHeaderRightButton]];
+    //[mainWebView stringByEvaluatingJavaScriptFromString:[NSString stringWithFormat:@"%@({})", ActionSetClickHeaderRightButton]];
+    
+    [bridge send:ActionSetClickHeaderRightButton data:nil responseCallback:^(id responseData) {
+        
+    }];
 }
 
 - (void)didBackAndRefresh {
-    [mainWebView stringByEvaluatingJavaScriptFromString:[NSString stringWithFormat:@"%@({})", ActionSetBackAndRefresh]];
+    //[mainWebView stringByEvaluatingJavaScriptFromString:[NSString stringWithFormat:@"%@({})", ActionSetBackAndRefresh]];
+    
+    [bridge send:ActionSetBackAndRefresh data:nil responseCallback:^(id responseData) {
+        
+    }];
 }
 
 - (void)didPushAction {
-    NSString *string = [self getUserJson];
+    //NSString *string = [self getUserJson];
     
-    [mainWebView stringByEvaluatingJavaScriptFromString:[NSString stringWithFormat:@"%@(%@)", ActionGetPush, string]];
+    //[mainWebView stringByEvaluatingJavaScriptFromString:[NSString stringWithFormat:@"%@(%@)", ActionGetPush, string]];
+    
+    [bridge send:ActionGetPush data:[self getUserJson] responseCallback:^(id responseData) {
+        
+    }];
 }
 
 - (void)didAppearAction {
-    NSString *string = [self getUserJson];
+    //NSString *string = [self getUserJson];
     
-    [mainWebView stringByEvaluatingJavaScriptFromString:[NSString stringWithFormat:@"%@(%@)", ActionGetAppear, string]];
+    //[mainWebView stringByEvaluatingJavaScriptFromString:[NSString stringWithFormat:@"%@(%@)", ActionGetAppear, string]];
+    
+    [bridge send:ActionGetAppear data:[self getUserJson] responseCallback:^(id responseData) {
+    
+    }];
 }
 
-- (NSString *)getUserJson {
+- (NSMutableDictionary *)getUserJson {
     UserModel *userModel = [[UserModel alloc] initWithDictionary:[[Helper shared] getAppUser]];
     
     NSMutableDictionary *dictionary = [[NSMutableDictionary alloc] init];
@@ -131,8 +218,10 @@
     [dictionary setObject:userModel.name forKey:KeyAppUserName];
     [dictionary setObject:userModel.jpushRegistrationId forKey:KeyJpushRegistrationId];
     
-    NSData *data = [NSJSONSerialization dataWithJSONObject:dictionary options:NSJSONWritingPrettyPrinted error:nil];
-    return [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    //NSData *data = [NSJSONSerialization dataWithJSONObject:dictionary options:NSJSONWritingPrettyPrinted error:nil];
+    //return [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    
+    return dictionary;
 }
 
 - (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType {
@@ -142,7 +231,7 @@
     
     NSLog(@"shouldStartLoadWithRequest:%@", url);
     
-    if([url hasPrefix:HeaderWebviewplus]) {
+    /*if([url hasPrefix:HeaderWebviewplus]) {
         NSString *string = [url stringByReplacingOccurrencesOfString:HeaderWebviewplus withString:@""];
         
         
@@ -208,7 +297,7 @@
         }
         
         return NO;
-    }
+    }*/
     
     if([url hasPrefix:HeaderHttp]) {
         

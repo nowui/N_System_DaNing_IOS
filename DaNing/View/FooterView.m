@@ -37,7 +37,7 @@
     for (int i = 0; i < itemArray.count; i++) {
         NSDictionary *payloadDictionary = [itemArray objectAtIndex:i];
         
-        FooterItemView *footerItemView = [[FooterItemView alloc] init:itemArray.count widthPayload:payloadDictionary];
+        FooterItemView *footerItemView = [[FooterItemView alloc] init:(int) itemArray.count widthPayload:payloadDictionary];
         [footerItemView setMyDelegate:self];
         [footerItemView setFrame:CGRectMake(width * i, 0, width, height)];
         [footerItemView setTag:i];

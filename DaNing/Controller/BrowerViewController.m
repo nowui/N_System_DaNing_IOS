@@ -356,6 +356,14 @@
     }
 }
 
+- (void)didSwitchBrowerControllerBrowerViewControllerDelegate:(NSString *)string {
+    
+}
+
+- (void)didSetApplicationIconBadgeNumberBrowerViewControllerDelegate:(int)number {
+    
+}
+
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
     if (scrollView == mainScrollView) {
         int position = scrollView.contentOffset.x / scrollView.frame.size.width;

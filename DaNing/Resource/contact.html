@@ -2,42 +2,57 @@
 <html>
 
 <head>
-    <title>上海市闸北区大宁国际学校</title>
+    <title>App</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <meta name="format-detection"content="telephone=no, email=no" />
-    <link rel="stylesheet" href="/css/ionic.min.css">
-    <link rel="stylesheet" href="/css/app.css">
-    <script src="/js/ionic.bundle.min.js"></script>
-    <script src="/js/angular-cookies.js"></script>
-    <script src="/js/app.js"></script>
+    <link rel="stylesheet" href="/css/frozen.css">
 </head>
 
-<body ng-app="App" ng-controller="Controller">
-	<div style="padding:10px;">
-		<label class="item item-input">
-		    <i class="icon ion-search placeholder-icon"></i>
-		    <input type="text" placeholder="搜索">
-		</label>
-	</div>
-	<ion-list>
-		<ion-item class="item-icon-left item-icon-right" href="#">
-			<i class="icon material-icons">&#xe7ef;</i>
-			老师
-			<i class="icon material-icons item-note">&#xe5cc;</i>
-		</ion-item>
-		<ion-item class="item-icon-left item-icon-right" href="#">
-			<i class="icon material-icons">&#xe7ef;</i>
-			家长
-			<i class="icon material-icons item-note">&#xe5cc;</i>
-		</ion-item>
-	</ion-list>
+<body>
+<div class="ui-searchbar-wrap ui-border-b">
+    <div class="ui-searchbar ui-border-radius">
+        <i class="ui-icon-search"></i>
+        <div class="ui-searchbar-text">搜索姓名</div>
+        <div class="ui-searchbar-input"><input value="" type="text" placeholder="搜索姓名" autocapitalize="off"></div>
+        <i class="ui-icon-close"></i>
+    </div>
+    <button class="ui-searchbar-cancel">取消</button>
+</div>
+<section>
+	<ul class="ui-list ui-list-link ui-border-tb">
+	    <li class="ui-border-t">
+	    	<div class="ui-list-thumb-s">
+	            <i class="icon material-icons">&#xe7ef;</i>
+	        </div>
+	        <div class="ui-list-info">
+	            <h4 class="ui-nowrap">老师</h4>
+	        </div>
+		</li>
+	    <li class="ui-border-t">
+	    	<div class="ui-list-thumb-s">
+	            <i class="icon material-icons">&#xe7ef;</i>
+	        </div>
+	        <div class="ui-list-info">
+	            <h4 class="ui-nowrap">家长</h4>
+	        </div>
+		</li>
+	</ul>
+</section>
+
 </body>
 
 </html>
+<script src="/js/zepto.min.js"></script>
+<script src="/js/frozen.js"></script>
 <script>
-var app = angular.module("App", ["ionic", "ngCookies"])
-    .controller('Controller', function($scope, $http, $ionicLoading, $timeout, $cookieStore) {
-
+(function () {
+	$('.ui-searchbar').click(function(){
+        $('.ui-searchbar-wrap').addClass('focus');
+        $('.ui-searchbar-input input').focus();
     });
+    $('.ui-searchbar-cancel').click(function(){
+        $('.ui-searchbar-wrap').removeClass('focus');
+    });
+})();
 </script>

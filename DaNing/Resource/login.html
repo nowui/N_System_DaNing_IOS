@@ -2,134 +2,180 @@
 <html>
 
 <head>
-    <title>上海市闸北区大宁国际学校</title>
+    <title>App</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <meta name="format-detection"content="telephone=no, email=no" />
-    <link rel="stylesheet" href="/css/ionic.min.css">
-    <link rel="stylesheet" href="/css/app.css">
-    <script src="/js/ionic.bundle.min.js"></script>
-    <script src="/js/angular-cookies.js"></script>
-    <script src="/js/app.js"></script>
+    <link rel="stylesheet" href="/css/frozen.css">
 </head>
 
-<body ng-app="App" ng-controller="Controller">
-    <div class="row" style="margin-top:10px;">
-        <div class="col" style="">
-            <hr style="border:none; border-top:1px solid #dddddd; margin-top:20px;" />
+<body>
+<section class="margin-top">
+	<div class="ui-form ui-border-t">
+        <div class="ui-form-item ui-border-b">
+            <label>账号</label>
+            <input id="account" type="text" placeholder="学校帐号">
         </div>
-        <div class="col" style="text-align:center;">
-            <h4>学校账号</h4></div>
-        <div class="col" style="">
-            <hr style="border:none; border-top:1px solid #dddddd; margin-top:20px;" />
+        <div class="ui-form-item ui-border-b">
+            <label>密码</label>
+            <input id="password" type="password" placeholder="密码">
         </div>
-    </div>
-    <div class="list list-inset" style="margin-top:10px;">
-        <div class="item item-icon-left">
-            <i class="icon material-icons">&#xe7fd;</i>
-            <input type="text" placeholder="输入帐号" ng-model="user.account" value="" style="width: 100%;">
-        </div>
-        <div class="item item-icon-left">
-            <i class="icon material-icons">&#xe897;</i>
-            <input type="password" placeholder="输入密码" ng-model="user.password" value="" style="width: 100%;">
-        </div>
-    </div>
-    <div style="padding-left:10px; padding-right:10px; margin-top:30px;">
-        <button class="button button-full button-positive" ng-click="submitForm();">确定</button>
-    </div>
+	</div>
+</section>
+
+<div class="ui-btn-wrap">
+    <button id="login" class="ui-btn-lg ui-btn-primary">
+        确定
+    </button>
+</div>
+
 </body>
 
 </html>
+<script src="/js/zepto.min.js"></script>
+<script src="/js/zepto.cookie.min.js"></script>
+<script src="/js/frozen.js"></script>
 <script>
-var app = angular.module("App", ["ionic", "ngCookies"])
-    .controller('Controller', function($scope, $http, $ionicLoading, $timeout, $cookieStore) {
-    	var jpushRegistrationId = "";
-        $scope.user = {};
-        $scope.user.account = $cookieStore.get(CookieAccount);
-        $scope.user.password = "";
+(function () {
+	var el;
+	var jpushRegistrationId = "";
+	var account = "";
+	var password = "";
 
-        getSetting = function(payload) {
-            jpushRegistrationId = payload.jpushRegistrationId;
+	$("#account").val($.fn.cookie(CookieAccount));
 
-            $scope.check();
-        }
+	initjsBridge = function() {
+		jsBridge.send(ActionSetTitle, {
+			text: "登录"
+		}, function(response) {
 
-        if(isApp) {
-			window.location.href = "webviewplus://" + encodeURIComponent("{\"action\":\"" + ActionSetTitle + "\",\"data\":{\"text\":\"登录\"}}");
-		}
+		});
+	}
 
-        $scope.submitForm = function() {
-            if ($scope.user.account == "" || $scope.user.password == "") {
-                $ionicLoading.show({
-                    template: "请填写完整!",
-                    duration: WaitDelay
-                });
-            } else {
-            	if(isApp) {
-            		window.location.href = "webviewplus://" + encodeURIComponent("{\"action\":\"" + ActionGetSetting + "\",\"data\":{}}");
-            	} else {
-					$scope.check();
-            	}
-            }
-        }
+    $("#login").on("click",function(e) {
+    	account = $("#account").val();
+    	password = $("#password").val();
 
-        $scope.check = function() {
-        	$cookieStore.put(CookieAccount, $scope.user.account);
+		if(account == "" || password == "") {
+            $.tips({
+		        content: "请填写完整!",
+		        stayTime: WaitDelay,
+		        type: "warn"
+		    });
+        } else {
+        	if(isApp) {
+				jsBridge.send(ActionGetSetting, {
 
-            $ionicLoading.show({
-                template: LoadingTemplate
-            });
+				}, function(response) {
+					jpushRegistrationId = response.data.jpushRegistrationId;
 
-            $http({
-                method: "POST",
-                url: "/user/check",
-                headers: {
-                    "Content-Type": "application/json;charset=utf-8"
-                },
-                data: {
-                    account: $scope.user.account,
-                    password: $scope.user.password,
-                    jpushRegistrationId: jpushRegistrationId
-                }
-            }).success(function(response) {
-                if (response.result) {
-                    var expireDate = new Date();
-                    expireDate.setDate(expireDate.getDate() + 999);
-
-                    $cookieStore.put(CookieUserId, response.data.id, {
-                        "expires": expireDate
-                    });
-                    $cookieStore.put(CookieUserName, response.data.name, {
-                        "expires": expireDate
-                    });
-
-                    $ionicLoading.hide();
-
-                    if (isApp) {
-                        window.location.href = "webviewplus://" + encodeURIComponent("{\"action\":\"" + ActionSetSetting + "\",\"data\":{\"appUserId\":\"" + response.data.id + "\",\"appUserName\":\"" + response.data.name + "\"}}");
-
-                        var data = {
-                            isRoot: true,
-                            isSplash: true,
-                            isDoubleClickBack: true,
-                            isFinish: true,
-                            data: "{\"type\": \"MultiFooter\", \"data\": {\"footer\": [{\"header\": {\"center\": {\"data\": \"上海市闸北区大宁国际学校\"} }, \"text\": \"首页\", \"icon\": \"\\ue88a\", \"url\": \"/index.html\"}, {\"header\": {\"center\": {\"data\": \"应用中心\"} }, \"text\": \"应用\", \"icon\": \"\\ue896\", \"url\": \"/application.html\"}, {\"header\": {\"center\": {\"data\": \"通讯录\"} }, \"text\": \"通讯录\", \"icon\": \"\\ue551\", \"url\": \"/contact.html\"}, {\"header\": {\"center\": {\"data\": \"我\"} }, \"text\": \"我\", \"icon\": \"\\ue7fd\", \"url\": \"/mine.html\"}] } }"
-                        };
-
-                        $timeout(function() {
-                            window.location.href = "webviewplus://" + encodeURIComponent("{\"action\":\"" + ActionSetSwitch + "\",\"data\":" + JSON.stringify(data) + "}");
-                        }, 1);
-                    } else {
-                        window.location.href = "/index.html";
-                    }
-                } else {
-                    $ionicLoading.show({
-                        template: response.message,
-                        duration: WaitDelay
-                    });
-                }
-
-            });
+					check();
+				});
+        	} else {
+				check();
+        	}
         }
     });
+
+    check = function() {
+        	$.fn.cookie(CookieAccount, account);
+
+            el = $.loading({
+		        content: LoadingText,
+		    });
+
+		    $.ajax({
+			  	type: "POST",
+			  	url: "/user/check",
+			    contentType: "application/json;charset=utf-8",
+			  	data: JSON.stringify({
+			  		account: account,
+                    password: password,
+                    jpushRegistrationId: jpushRegistrationId
+			  	}),
+			  	dataType: "json",
+			  	success: function(data, status, xhr) {
+					if(data.result) {
+        				$.fn.cookie(CookieUserId, data.data.id);
+
+        				$.fn.cookie(CookieUserName, data.data.name);
+
+        				if (isApp) {
+        					jsBridge.send(ActionSetSetting, {
+								appUserId: data.data.id,
+								appUserName: data.data.name
+							}, function(response) {
+
+							});
+
+							jsBridge.send(ActionSetSwitch, {
+	                            isRoot: true,
+	                            isSplash: true,
+	                            isDoubleClickBack: true,
+	                            isFinish: true,
+	                            data: {
+	                            	type: "MultiFooter",
+	                            	data: {
+	                            		footer: [{
+	                            			header: {
+	                            				center: {
+	                            					data: "上海市闸北区大宁国际学校"
+	                            				}
+	                            			},
+                            				text: "首页",
+                            				icon: "\ue88a",
+                            				url: "/index.html"
+	                            		}, {
+	                            			header: {
+	                            				center: {
+	                            					data: "应用中心"
+	                            				}
+	                            			},
+                            				text: "应用",
+                            				icon: "\ue896",
+                            				url: "/application.html"
+	                            		},{
+	                            			header: {
+	                            				center: {
+	                            					data: "通讯录"
+	                            				}
+	                            			},
+                            				text: "通讯录",
+                            				icon: "\ue551",
+                            				url: "/contact.html"
+	                            		},{
+	                            			header: {
+	                            				center: {
+	                            					data: "我的"
+	                            				}
+	                            			},
+                            				text: "我的",
+                            				icon: "\ue7fd",
+                            				url: "/mine.html"
+	                            		}]
+	                            	}
+	                            }
+							}, function(response) {
+
+							});
+	                    } else {
+	                        window.location.href = "/index.html";
+	                    }
+					} else {
+	                    $.tips({
+					        content: data.message,
+					        stayTime: WaitDelay,
+					        type: "warn"
+					    });
+					}
+			  	},
+			  	error: function(xhr, errorType, error) {
+
+			  	},
+			  	complete: function(xhr, status) {
+        			el.loading("hide");
+			  	}
+			});
+        }
+})();
 </script>

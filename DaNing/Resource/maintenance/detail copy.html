@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>上海市闸北区大宁国际学校</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="format-detection"content="telephone=no, email=no" />
+    <link rel="stylesheet" href="/css/ionic.min.css">
+    <link rel="stylesheet" href="/css/mobiscroll.custom-2.17.1.min.css">
+    <link rel="stylesheet" href="/css/app.css">
+    <script src="/js/ionic.bundle.min.js"></script>
+    <script src="/js/angular-cookies.js"></script>
+    <script src="/js/taggedInfiniteScroll.min.js"></script>
+    <script src="/js/zepto.min.js"></script>
+    <script src="/js/mobiscroll.custom-2.17.1.min.js"></script>
+    <script src="/js/app.js"></script>
+</head>
+
+<body ng-app="App" ng-controller="Controller">
+	<ion-list>
+		<ion-item ng-class="{'item-icon-right': isSubmit}" ng-click="clickType();">
+			维修班级
+			<div style="display:none;">
+				<select id="class" ng-model="maintenance.class" ng-options="item as item.text for item in classs "></select>
+			</div>
+			<span class="item-note" style="color:#444;">{{maintenance.class.text}}</span>
+			<i class="icon material-icons item-note" ng-show="isSubmit">&#xe5cc;</i>
+		</ion-item>
+		<ion-item style="margin-top:10px;">
+			<div style="position:absolute;">维修事项</div>
+			<div style="padding-left:80px;">
+				<textarea rows="5" style="width:100%; font-size:14px; background-color:transparent;" ng-model="maintenance.content"></textarea>
+			</div>
+		</ion-item>
+	</ion-list>
+    <div style="margin-top:30px;" ng-show="isSubmit" class="row">
+    	<div class="col">
+        	<button class="button button-full button-positive" ng-click="saveOrUpdate(false);">保存</button>
+    	</div>
+    	<div class="col">
+        	<button class="button button-full button-positive" ng-click="saveOrUpdate(true);">保存并提交审核</button>
+    	</div>
+    </div>
+    <div style="margin-top:30px;" ng-show="isAudit" class="row">
+    	<div class="col">
+        	<button class="button button-full button-positive" ng-click="clickAudit('YES');">同意</button>
+    	</div>
+    	<div class="col">
+        	<button class="button button-full button-positive" ng-click="clickAudit('NO');">拒绝</button>
+    	</div>
+    </div>
+	<div style="margin:30px;" ng-show="! isSubmit">
+		<ol class="timeline">
+			<li class="tl-node" ng-repeat="history in historyList">
+				<div class="tl-stamp">{{history.createTime}}</div>
+				<div class="tl-content">{{history.stepName}}</div>
+				<div>{{history.userName}}: {{history.auditResult}}</div>
+			</li>
+		</ol>
+	</div>
+</body>
+
+</html>
+<script>
+(function() {
+var app = angular.module("App", ["ionic", "ngCookies", "tagged.directives.infiniteScroll"])
+    .controller('Controller', function($scope, $http, $ionicLoading, $ionicPopup, $timeout, $cookieStore) {
+    	var userId = $cookieStore.get(CookieUserId);
+    	var id = "";
+		var action = "save";
+    	$scope.maintenance = {};
+    	$scope.maintenance.class = {
+    		value: "",
+    		text: ""
+    	};
+    	$scope.isSubmit = false;
+    	$scope.historyList = [];
+    	$scope.isAudit = false;
+    	$scope.task = {};
+    	$scope.task.auditResult = "";
+    	$scope.task.auditMessage = "";
+
+    	if(! isNullOrEmpty(getUrlParam("isAudit"))) {
+    		$scope.isAudit = getUrlParam("isAudit") == "true";
+    	}
+
+		$ionicLoading.show({
+            template: LoadingTemplate
+        });
+
+        getSetting = function(payload) {
+			userId = payload.appUserId;
+		}
+
+        getAlert = function(payload) {
+			$scope.task.auditMessage = payload.data;
+
+			audit();
+		}
+
+        if(isApp) {
+			window.location.href = "webviewplus://" + encodeURIComponent("{\"action\":\"" + ActionSetTitle + "\",\"data\":{\"text\":\"我的维修\"}}");
+
+			$timeout(function() {
+				window.location.href = "webviewplus://" + encodeURIComponent("{\"action\":\"" + ActionGetSetting + "\",\"data\":{}}");
+		    }, 1);
+		}
+
+    	$scope.classs = []
+
+		init = function() {
+			$scope.isSubmit = true;
+
+			$timeout(function() {
+				$('#class').mobiscroll().select({
+			        theme: 'ios',
+			        lang: 'zh',
+			        display: 'bottom'
+			    });
+
+			    $('#type').hide();
+
+				$('#start').mobiscroll().date({
+			        theme: 'ios',
+			        lang: 'zh',
+			        dateFormat: 'yyyy-mm-dd',
+			        display: 'bottom'
+			    });
+
+				$('#end').mobiscroll().date({
+			        theme: 'ios',
+			        lang: 'zh',
+			        dateFormat: 'yyyy-mm-dd',
+			        display: 'bottom'
+			    });
+			});
+
+			$scope.clickType = function() {
+				$('#class').mobiscroll('show');
+			}
+
+			$scope.clickStart = function() {
+				$('#start').mobiscroll('show');
+			}
+
+			$scope.clickEnd = function() {
+				$('#end').mobiscroll('show');
+			}
+		}
+
+		load = function() {
+			$http({
+	            method: "POST",
+	            url: "/maintenance/find",
+	            headers: {
+	                "Content-Type": "application/json;charset=utf-8"
+	            },
+	            data: {
+	            	id: id
+	            }
+	        }).success(function(response) {
+	            if (response.result) {
+	            	for(var i = 0; i < $scope.classs.length; i++) {
+						if(response.data.classId == $scope.classs[i].value) {
+							$scope.maintenance.class = $scope.classs[i];
+							break;
+						}
+	            	}
+
+					$scope.maintenance.content = decodeURIComponent(response.data.content);
+
+					if(response.data.instanceState == "START") {
+						if(! $scope.isAudit && response.data.userId == userId) {
+							init();
+						}
+					}
+
+					loadHistory(response.data.instanceId);
+
+	            	$ionicLoading.hide();
+				} else {
+					$ionicLoading.show({
+						template: response.message,
+				      	duration: WaitDelay
+				    });
+				}
+	        });
+        };
+
+        loadHistory = function(instanceId) {
+			$http({
+	            method: "POST",
+	            url: "/history/list",
+	            headers: {
+	                "Content-Type": "application/json;charset=utf-8"
+	            },
+	            data: {
+	            	instanceId: instanceId
+	            }
+	        }).success(function(response) {
+	            if (response.result) {
+					$scope.historyList = response.data;
+				}
+	        });
+        };
+
+		$scope.saveOrUpdate = function(isAudit) {
+			var message = "";
+
+			if(isNullOrEmpty($scope.maintenance.class.value)) {
+				message += "请选择维修班级!<br/>";
+			}
+
+			if(isNullOrEmpty($scope.maintenance.content)) {
+				message += "请填写维修事项!<br/>";
+			}
+
+			if(! isNullOrEmpty(message)) {
+				$ionicLoading.show({
+					template: message,
+			      	duration: WaitDelay
+			    });
+
+			    return;
+			}
+
+			$ionicLoading.show({
+	            template: LoadingTemplate
+	        });
+
+			$http({
+				method: "POST",
+				url: "/maintenance/" + action,
+				headers: {
+					"Content-Type": "application/json;charset=utf-8"
+				},
+				data: {
+	            	userId: userId,
+					id: id,
+					classId: $scope.maintenance.class.value,
+					content: encodeURIComponent($scope.maintenance.content),
+					isAudit: isAudit
+				}
+			}).success(function(response) {
+				if (response.result) {
+					$ionicLoading.show({
+						template: "提交成功!",
+				      	duration: WaitDelay
+				    });
+
+					$timeout(function() {
+						window.location.href = "webviewplus://" + encodeURIComponent("{\"action\":\"" + ActionSetBackAndRefresh + "\",\"data\":{}}");
+				    }, WaitDelay);
+				} else {
+					$ionicLoading.show({
+						template: response.message,
+				      	duration: WaitDelay
+				    });
+				}
+			});
+		}
+
+		$scope.clickAudit = function(result) {
+			$scope.task.auditResult = result;
+
+			window.location.href = "webviewplus://" + encodeURIComponent("{\"action\":\"" + ActionGetAlert + "\",\"data\":{\"title\": \"审批意见\", \"placeholder\": \"请输入\"}}");
+		}
+
+		audit = function() {
+			$ionicLoading.show({
+	            template: LoadingTemplate
+	        });
+
+			$http({
+				method: "POST",
+				url: "/task/audit",
+				headers: {
+					"Content-Type": "application/json;charset=utf-8"
+				},
+				data: {
+	            	userId: userId,
+					id: getUrlParam("taskId"),
+					auditResult: $scope.task.auditResult,
+					auditMessage: $scope.task.auditMessage
+				}
+			}).success(function(response) {
+				if (response.result) {
+					$ionicLoading.show({
+						template: "提交成功!",
+				      	duration: WaitDelay
+				    });
+
+					$timeout(function(){
+						window.location.href = "webviewplus://" + encodeURIComponent("{\"action\":\"" + ActionSetBackAndRefresh + "\",\"data\":{}}");
+				    }, WaitDelay);
+				} else {
+					$ionicLoading.show({
+						template: response.message,
+				      	duration: WaitDelay
+				    });
+				}
+			});
+		}
+
+        loadClass = function(instanceId) {
+			$http({
+	            method: "POST",
+	            url: "/class/list",
+	            headers: {
+	                "Content-Type": "application/json;charset=utf-8"
+	            },
+	            data: {
+
+	            }
+	        }).success(function(response) {
+	            if (response.result) {
+					var classList = response.data;
+
+					for(var i = 0; i < classList.length; i++) {
+						var c = classList[i];
+
+						$scope.classs.push({
+							value: c.id,
+							text: c.name
+						});
+					}
+
+					if(isNullOrEmpty(getUrlParam("id"))) {
+						init();
+
+						$ionicLoading.hide();
+					} else {
+						id = getUrlParam("id");
+
+						action = "update";
+
+						load();
+					}
+				}
+	        });
+        };
+
+		loadClass();
+	});
+})();
+</script>

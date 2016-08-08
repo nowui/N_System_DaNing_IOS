@@ -8,9 +8,9 @@
 
 #import <Foundation/Foundation.h>
 
-#define WebUrl @"http://run.nowui.com"
-//#define WebUrl @"http://localhost:8888"
-//#define WebUrl @"http://192.168.49.112:8888"
+//#define WebUrl @"http://run.nowui.com"
+#define WebUrl @"http://localhost:8888"
+//#define WebUrl @"http://192.168.200.5:8080"
 
 
 #define HeaderHttp @"http"

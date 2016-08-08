@@ -81,7 +81,7 @@
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
     NSLog(@"%@", paths);
     
-    [NSURLProtocol registerClass:[BaseURLProtocol class]];
+    //[NSURLProtocol registerClass:[BaseURLProtocol class]];
     
     [[UIApplication sharedApplication] setStatusBarStyle:StatusBarStyleDefault];
     
@@ -91,10 +91,8 @@
     if([[Helper shared] isNullOrEmpty:userModel.identity]) {
         initDataString = @"{\"type\": \"OnePage\", \"data\": {\"url\": \"/login.html\", \"header\": {\"center\": {\"data\": \"\"} } } }";
     } else {
-        initDataString = @"{\"type\": \"MultiFooter\", \"data\": {\"footer\": [{\"header\": {\"center\": {\"data\": \"上海市闸北区大宁国际学校\"} }, \"text\": \"首页\", \"icon\": \"\\ue88a\", \"url\": \"/index.html\"}, {\"header\": {\"center\": {\"data\": \"应用中心\"} }, \"text\": \"应用\", \"icon\": \"\\ue896\", \"url\": \"/application.html\"}, {\"header\": {\"center\": {\"data\": \"通讯录\"} }, \"text\": \"通讯录\", \"icon\": \"\\ue551\", \"url\": \"/contact.html\"}, {\"header\": {\"center\": {\"data\": \"我\"} }, \"text\": \"我\", \"icon\": \"\\ue7fd\", \"url\": \"/mine.html\"}] } }";
+        initDataString = @"{\"type\": \"MultiFooter\", \"data\": {\"footer\": [{\"header\": {\"center\": {\"data\": \"上海市闸北区大宁国际学校\"} }, \"text\": \"首页\", \"icon\": \"\\ue88a\", \"url\": \"/index.html\"}, {\"header\": {\"center\": {\"data\": \"应用中心\"} }, \"text\": \"应用\", \"icon\": \"\\ue896\", \"url\": \"/application.html\"}, {\"header\": {\"center\": {\"data\": \"通讯录\"} }, \"text\": \"通讯录\", \"icon\": \"\\ue551\", \"url\": \"/contact.html\"}, {\"header\": {\"center\": {\"data\": \"我的\"} }, \"text\": \"我的\", \"icon\": \"\\ue7fd\", \"url\": \"/mine.html\"}] } }";
     }
-    
-    //initDataString = @"{\"type\": \"MultiTab\", \"data\": {\"header\": {\"center\": {\"data\": \"上海市闸北区大宁国际学校\"} }, \"tab\": [{\"text\": \"校园新闻\", \"icon\": \"\\ue88a\", \"url\": \"/index.html\"}, {\"text\": \"通知公告\", \"icon\": \"\\ue7fd\", \"url\": \"/mine.html\"}] } }";
     
     BrowerViewController *browerViewController = [[BrowerViewController alloc] init:initDataString];
     [browerViewController setMyDelegate:self];

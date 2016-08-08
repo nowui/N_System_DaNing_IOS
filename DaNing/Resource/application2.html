@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>上海市闸北区大宁国际学校</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="format-detection"content="telephone=no, email=no" />
+    <link rel="stylesheet" href="/css/ionic.min.css">
+    <link rel="stylesheet" href="/css/app.css">
+    <script src="/js/ionic.bundle.min.js"></script>
+    <script src="/js/angular-cookies.js"></script>
+    <script src="/js/app.js"></script>
+</head>
+
+<body ng-app="App" ng-controller="Controller">
+	<ion-list>
+		<ion-item style="margin-top:10px;">
+			<div>信息门户</div>
+		</ion-item>
+		<ion-item>
+			<div class="row">
+				<div class="col">
+					<button class="button button-positive" style="width:50px; height:50px; border-radius:25px; display: block; margin-left: auto; margin-right: auto; background-color: #92cab1;" ng-click="clickPortalBasic();">
+				      <i class="icon material-icons" style="height:50px; line-height:50px; text-align:center;">&#xe0af;</i>
+				    </button>
+				    <div style="text-align:center; margin-top:10px;">
+						学校概况
+					</div>
+				</div>
+				<div class="col">
+					<button class="button button-positive" style="width:50px; height:50px; border-radius:25px; display: block; margin-left: auto; margin-right: auto; background-color: #ffc652;" ng-click="clickArticle();">
+				      <i class="icon material-icons" style="height:50px; line-height:50px; text-align:center;">&#xe85d;</i>
+				    </button>
+				    <div style="text-align:center; margin-top:10px;">
+						校园资讯
+					</div>
+				</div>
+				<div class="col">
+					<button class="button button-positive" style="width:50px; height:50px; border-radius:25px; display: block; margin-left: auto; margin-right: auto; background-color: #75c3d6;" ng-click="clickPortalView();">
+				      <i class="icon material-icons" style="height:50px; line-height:50px; text-align:center;">&#xe410;</i>
+				    </button>
+				    <div style="text-align:center; margin-top:10px;">
+						校园风光
+					</div>
+				</div>
+				<div class="col">
+
+				</div>
+			</div>
+		</ion-item>
+		<ion-item style="margin-top:10px;">
+			<div>移动办公</div>
+		</ion-item>
+		<ion-item>
+			<div class="row">
+				<div class="col">
+					<button class="button button-positive" style="width:50px; height:50px; border-radius:25px; display: block; margin-left: auto; margin-right: auto; background-color: #75c3d6;" ng-click="clickTask();">
+						<span style="min-width:20px; height:20px; line-height:20px; font-size: 14px;position:absolute; right:-5px; top:-5px; border-radius:10px; background-color: red;" ng-show="taskCount > 0">{{taskCount}}</span>
+				      	<i class="icon material-icons" style="height:50px; line-height:50px; text-align:center;">&#xe614;</i>
+				    </button>
+				    <div style="text-align:center; margin-top:10px;">
+						待办
+					</div>
+				</div>
+				<div class="col">
+					<button class="button button-positive" style="width:50px; height:50px; border-radius:25px; display: block; margin-left: auto; margin-right: auto; background-color: #92cab1;">
+				      <i class="icon material-icons" style="height:50px; line-height:50px; text-align:center;">&#xe616;</i>
+				    </button>
+				    <div style="text-align:center; margin-top:10px;">
+						日程
+					</div>
+				</div>
+				<div class="col">
+					<button class="button button-positive" style="width:50px; height:50px; border-radius:25px; display: block; margin-left: auto; margin-right: auto; background-color: #ffc652;" ng-click="clickNotice();">
+						<span style="min-width:20px; height:20px; line-height:20px; font-size: 14px;position:absolute; right:-5px; top:-5px; border-radius:10px; background-color: red;" ng-show="noticeCount > 0">{{noticeCount}}</span>
+				      	<i class="icon material-icons" style="height:50px; line-height:50px; text-align:center;">&#xe7f5;</i>
+				    </button>
+				    <div style="text-align:center; margin-top:10px;">
+						通知
+					</div>
+				</div>
+				<div class="col">
+					<button class="button button-positive" style="width:50px; height:50px; border-radius:25px; display: block; margin-left: auto; margin-right: auto; background-color: #a8bd3e;" ng-click="clickMeeting();">
+						<span style="min-width:20px; height:20px; line-height:20px; font-size: 14px;position:absolute; right:-5px; top:-5px; border-radius:10px; background-color: red;" ng-show="meetingCount > 0">{{meetingCount}}</span>
+				      	<i class="icon material-icons" style="height:50px; line-height:50px; text-align:center;">&#xe8f9;</i>
+				    </button>
+				    <div style="text-align:center; margin-top:10px;">
+						会议
+					</div>
+				</div>
+			</div>
+			<div class="row" style="margin-top:15px;">
+				<div class="col">
+					<button class="button button-positive" style="width:50px; height:50px; border-radius:25px; display: block; margin-left: auto; margin-right: auto; background-color: #ffc652;">
+				      <i class="icon material-icons" style="height:50px; line-height:50px; text-align:center;">&#xe051;</i>
+				    </button>
+				    <div style="text-align:center; margin-top:10px;">
+						课程
+					</div>
+				</div>
+				<div class="col">
+					<button class="button button-positive" style="width:50px; height:50px; border-radius:25px; display: block; margin-left: auto; margin-right: auto; background-color: #a8bd3e;" ng-click="clickLeave();">
+				      <i class="icon material-icons" style="height:50px; line-height:50px; text-align:center;">&#xe889;</i>
+				    </button>
+				    <div style="text-align:center; margin-top:10px;">
+						请假
+					</div>
+				</div>
+				<div class="col">
+					<button class="button button-positive" style="width:50px; height:50px; border-radius:25px; display: block; margin-left: auto; margin-right: auto; background-color: #75c3d6;" ng-click="clickPurchase();">
+				      <i class="icon material-icons" style="height:50px; line-height:50px; text-align:center;">&#xe8df;</i>
+				    </button>
+				    <div style="text-align:center; margin-top:10px;">
+						采购
+					</div>
+				</div>
+				<div class="col">
+					<button class="button button-positive" style="width:50px; height:50px; border-radius:25px; display: block; margin-left: auto; margin-right: auto; background-color: #92cab1;" ng-click="clickMaintenance();">
+				      <i class="icon material-icons" style="height:50px; line-height:50px; text-align:center;">&#xe8d1;</i>
+				    </button>
+				    <div style="text-align:center; margin-top:10px;">
+						维修
+					</div>
+				</div>
+			</div>
+		</ion-item>
+		<ion-item style="margin-top:10px;">
+			<div>移动资源</div>
+		</ion-item>
+		<ion-item style="margin-bottom:10px;">
+			<div class="row">
+				<div class="col">
+					<button class="button button-positive" style="width:50px; height:50px; border-radius:25px; display: block; margin-left: auto; margin-right: auto; background-color: #92cab1;">
+				      <i class="icon material-icons" style="height:50px; line-height:50px; text-align:center;">&#xe2c2;</i>
+				    </button>
+				    <div style="text-align:center; margin-top:10px;">
+						云盘
+					</div>
+				</div>
+				<div class="col">
+					<button class="button button-positive" style="width:50px; height:50px; border-radius:25px; display: block; margin-left: auto; margin-right: auto; background-color: #75c3d6;">
+				      <i class="icon material-icons" style="height:50px; line-height:50px; text-align:center;">&#xe31e;</i>
+				    </button>
+				    <div style="text-align:center; margin-top:10px;">
+						eLibrary
+					</div>
+				</div>
+				<div class="col">
+					<button class="button button-positive" style="width:50px; height:50px; border-radius:25px; display: block; margin-left: auto; margin-right: auto; background-color: #ffc652;">
+				      <i class="icon material-icons" style="height:50px; line-height:50px; text-align:center;">&#xe63a;</i>
+				    </button>
+				    <div style="text-align:center; margin-top:10px;">
+						微视频
+					</div>
+				</div>
+				<div class="col">
+					<button class="button button-positive" style="width:50px; height:50px; border-radius:25px; display: block; margin-left: auto; margin-right: auto; background-color: #a8bd3e;">
+				      <i class="icon material-icons" style="height:50px; line-height:50px; text-align:center;">&#xe8b6;</i>
+				    </button>
+				    <div style="text-align:center; margin-top:10px;">
+						成绩查询
+					</div>
+				</div>
+			</div>
+		</ion-item>
+	</ion-list>
+</body>
+
+</html>
+<script>
+var app = angular.module("App", ["ionic", "ngCookies"])
+    .controller('Controller', function($scope, $http, $ionicLoading, $timeout, $cookieStore) {
+    	var userId = $cookieStore.get(CookieUserId);
+
+    	$scope.taskCount = 0;
+		$scope.noticeCount = 0;
+		$scope.meetingCount = 0;
+
+		getPush = function(payload) {
+			userId = payload.appUserId;
+
+			load();
+		}
+
+		getAppear = function(payload) {
+			userId = payload.appUserId;
+
+			load();
+		}
+
+        getSetting = function(payload) {
+			userId = payload.appUserId;
+
+			load();
+		}
+
+		load = function() {
+			$http({
+				method: "POST",
+				url: "/count",
+				headers: {
+					"Content-Type": "application/json;charset=utf-8"
+				},
+				data: {
+					userId: userId
+				}
+			}).success(function(response) {
+				if (response.result) {
+					$scope.taskCount = response.data.taskCount;
+					$scope.noticeCount = response.data.noticeCount;
+					$scope.meetingCount = response.data.meetingCount;
+
+					$timeout(function() {
+						window.location.href = "webviewplus://" + encodeURIComponent("{\"action\":\"" + ActionSetApplicationIconBadgeNumber + "\",\"data\":{\"number\": " + (Number($scope.taskCount) + Number($scope.noticeCount) + Number($scope.meetingCount)) + "}}");
+				    }, 1);
+				}
+			});
+		}
+
+		$scope.clickTask = function() {
+			var data = {
+                data: "{\"type\": \"MultiTab\", \"data\": {\"header\": {\"center\": {\"data\": \"我的待办\"} }, \"tab\": [{\"text\": \"未审核\", \"url\": \"/task/index.html?type=NO\"}, {\"text\": \"已审核\", \"url\": \"/task/index.html?type=YES\"}] } }"
+            };
+
+            $timeout(function() {
+                window.location.href = "webviewplus://" + encodeURIComponent("{\"action\":\"" + ActionSetNavite + "\",\"data\":" + JSON.stringify(data) + "}");
+            }, 1);
+		}
+
+		$scope.clickPortalBasic = function() {
+			window.location.href = "/portal/basic.html";
+		}
+
+		$scope.clickArticle = function() {
+			window.location.href = "/article/index.html";
+		}
+
+		$scope.clickPortalView = function() {
+			window.location.href = "/portal/view.html";
+		}
+
+		$scope.clickNotice = function() {
+			window.location.href = "/notice/index.html";
+		}
+
+		$scope.clickMeeting = function() {
+			window.location.href = "/meeting/index.html";
+		}
+
+		$scope.clickLeave = function() {
+			window.location.href = "/leave/index.html";
+		}
+
+		$scope.clickPurchase = function() {
+			window.location.href = "/purchase/index.html";
+		}
+
+		$scope.clickMaintenance = function() {
+			window.location.href = "/maintenance/index.html";
+		}
+
+		if(isApp) {
+			$timeout(function() {
+				window.location.href = "webviewplus://" + encodeURIComponent("{\"action\":\"" + ActionGetSetting + "\",\"data\":{}}");
+		    }, 1);
+		} else {
+			load();
+		}
+    });
+</script>

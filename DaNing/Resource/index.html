@@ -2,108 +2,114 @@
 <html>
 
 <head>
-    <title>上海市闸北区大宁国际学校</title>
+    <title>App</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <meta name="format-detection"content="telephone=no, email=no" />
-    <link rel="stylesheet" href="/css/ionic.min.css">
-    <link rel="stylesheet" href="/css/app.css">
-    <script src="/js/ionic.bundle.min.js"></script>
-    <script src="/js/angular-cookies.js"></script>
-    <script src="/js/taggedInfiniteScroll.min.js"></script>
-    <script src="/js/app.js"></script>
+    <link rel="stylesheet" href="/css/frozen.css">
+	<link rel="stylesheet" href="/css/dropload.css">
 </head>
 
-<body ng-app="App" ng-controller="Controller">
-	<ion-slide-box style="height:200px;" does-continue="true" show-pager="true" auto-play="true">
-	  	<ion-slide ng-repeat="article in bannerList" repeat-done="repeatDone()">
-	    	<a href="/article/detail.html?id={{article.id}}"><div style="text-align:center;"><img src="{{article.picture}}" style="width:100%;" /></div></a>
-	  	</ion-slide>
-	</ion-slide-box>
-	<div tagged-infinite-scroll="load()" tagged-infinite-scroll-disabled="isLoad || !isMore" tagged-infinite-scroll-distance="0">
-	    <ion-list>
-			<ion-item class="item-thumbnail-left" ng-repeat="article in articleList" href="/article/detail.html?id={{article.id}}">
-				<img src="{{article.picture}}" style="width:auto; height:auto; max-width:80px; max-height:80px;" />
-				<h2 style="margin-top:4px;">{{article.title}}</h2>
-				<p style="white-space:normal; opacity:0.5; overflow:hidden; text-overflow:ellipsis; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical;">{{article.summary}}</p>
-			</ion-item>
-		</ion-list>
-	</div>
+<body>
+<div class="ui-slider">
+    <ul class="ui-slider-content"></ul>
+</div>
+
+<div>
+	<ul class="ui-list ui-list-link ui-border-tb">
+	</ul>
+</div>
+
 </body>
 
 </html>
+<script src="/js/zepto.min.js"></script>
+<script src="/js/frozen.js"></script>
+<script src="/js/dropload.min.js"></script>
 <script>
-(function() {
-var app = angular.module("App", ["ionic", "ngCookies", "tagged.directives.infiniteScroll"])
-	.directive('repeatDone', function() {
-		return function(scope, element, attrs) {
-			if (scope.$last) {
-				scope.$eval(attrs.repeatDone);
-			}
-		}
-	})
-    .controller('Controller', function($scope, $http, $ionicLoading, $timeout, $cookieStore, $ionicSlideBoxDelegate) {
-		var page = 1;
-		var limit = 10;
-		$scope.isLoad = false;
-		$scope.isMore = true;
-		$scope.articleList = [];
-		$scope.bannerList = [];
 
-		$ionicLoading.show({
-            template: LoadingTemplate
-        });
 
-        $scope.repeatDone = function() {
-			$ionicSlideBoxDelegate.update();
-		};
+(function () {
+	var page = 1;
+	var limit = 10;
 
-        $scope.load = function() {
-        	if($scope.isLoad) {
-        		return;
-        	}
-        	$scope.isLoad = true;
+	initjsBridge = function() {
 
-			$http({
-	            method: "POST",
-	            url: "/article/list",
-	            headers: {
-	                "Content-Type": "application/json;charset=utf-8"
-	            },
-	            data: {
-	                page: page,
-					limit: limit
-	            }
-	        }).success(function(response) {
-	            if (response.result) {
-					var list = response.data;
+	}
 
-					for (var i = 0; i < list.length; i++) {
-						var article = list[i];
+  	$("body").dropload({
+        scrollArea : window,
+        loadDownFn : function(me) {
+			$.ajax({
+			  	type: "POST",
+			  	url: "/article/list",
+			    contentType: "application/json;charset=utf-8",
+			  	data: JSON.stringify({
+			  		page: page,
+			  		limit: limit
+			  	}),
+			  	dataType: "json",
+			  	success: function(data, status, xhr) {
+					if(data.result) {
+						var banner_html = "";
+						var article_html = "";
 
-						if(i < 2 && page == 1) {
-							article.picture = imageUrl + article.picture;
-							$scope.bannerList.push(article);
-						} else {
-							article.picture = imageUrl + article.picture.replace("/upload/images/", "/upload/_thumbs/Images/");
-							$scope.articleList.push(article);
+						for (var i = 0; i < data.data.length; i++) {
+							var article = data.data[i];
+
+							if(i < 3 && page == 1) {
+								banner_html += "<li><span style='background-image:url(http://daning.nowui.com" + article.picture + "); background-position:center;background-size:contain;'></span></li>";
+							}
+
+							article_html += "<li data-url='/article/detail.html?id=" + article.id + "'>";
+							article_html += "<div class='ui-list-thumb'>";
+							article_html += "<span style='background-image:url(http://daning.nowui.com" + article.picture.replace("/upload/images/", "/upload/_thumbs/Images/") + ")'></span>";
+							article_html += "</div>";
+							article_html += "<div class='ui-list-info ui-border-t'>";
+							article_html += "<h4 class='ui-nowrap'>" + article.title + "</h4>";
+							article_html += "<p class='ui-nowrap'>" + article.summary + "</p>";
+							article_html += "</div>";
+							article_html += "</li>";
 						}
+
+						if(page == 1) {
+							$(".ui-slider-content").html(banner_html);
+
+							var slider = new fz.Scroll('.ui-slider', {
+						        role: "slider",
+						        indicator: true,
+						        autoplay: true,
+						        interval: 5000
+						    });
+
+					    	$(".ui-slider").css("height", $(window).width() / 320 * 240 - $(".ui-slider").height());
+						}
+
+						$(".ui-list").append(article_html);
+
+					    if(data.data.length == limit) {
+					    	page++;
+					    } else {
+							me.lock();
+
+							me.noData();
+
+							$(".dropload-down").hide();
+					    }
 					}
+			  	},
+			  	error: function(xhr, errorType, error) {
 
-					if (list.length == limit) {
-						page++;
-					}
+			  	},
+			  	complete: function(xhr, status) {
+					$("[data-url]").on("click",function(e) {
+				      	window.location.href = $(this).attr("data-url");
+				    });
 
-					if(list.length < limit) {
-						$scope.isMore = false;
-					}
-
-					$scope.isLoad = false;
-				}
-
-	            $ionicLoading.hide();
-	        });
-        };
-	});
+					me.resetload();
+			  	}
+			})
+        }
+    });
 })();
 </script>
